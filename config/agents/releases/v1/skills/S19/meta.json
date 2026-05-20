@@ -1,0 +1,53 @@
+{
+  "id": "S19",
+  "version": "v1",
+  "name": "Test Strategy Generator",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Выбирает нужный баланс unit/integration/e2e/contract tests и negative cases.",
+    "Seed rationale: Помогает TestAgent не писать лишнее и не упускать важное."
+  ],
+  "inputs": [
+    "Вход: risk, component type, blast radius, affected layers. Выход: test plan + priorities."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Выбирает нужный баланс unit/integration/e2e/contract tests и negative cases.",
+  "why": "Помогает TestAgent не писать лишнее и не упускать важное.",
+  "download_ref": null,
+  "build_spec": "Вход: risk, component type, blast radius, affected layers. Выход: test plan + priorities.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S19",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

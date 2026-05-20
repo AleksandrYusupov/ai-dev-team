@@ -1,0 +1,36 @@
+pack_id: provisioner_platform_core
+version: v1
+purpose: Держит зависимости, flags и stale code в здоровом состоянии.
+skill_refs:
+- F04
+- F05
+- F06
+- F07
+- S26
+- S39
+- S40
+optional_skill_refs: []
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - triage
+  - planned
+  - ready_for_build
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - architecture_sign_off
+  - credential_ownership_vendor_console_actions
+  - protected_deploy
+  notes: Repo creation, environment access, and secret setup stay human-approved.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A18
+- config/workflow/runtime_role_contracts.yaml#provisioner_agent

@@ -1,0 +1,37 @@
+# S21 — Coverage & Gap Analyzer
+
+## Summary
+- Category: `custom`
+- Availability: `custom`
+- Kind: `custom`
+- Reference-only default: `false`
+- Sensitivity class: `standard`
+- Description: Оценивает, чего в test suite всё ещё не хватает: edge cases, unhappy paths, race conditions, auth cases, migrations.
+- Why: Нужен TestAgent и ReviewAgent.
+
+## When To Use
+- Оценивает, чего в test suite всё ещё не хватает: edge cases, unhappy paths, race conditions, auth cases, migrations.
+- TODO: tighten the selection boundary for runtime use.
+
+## Inputs
+- Source build spec snapshot: Использовать diff-aware analysis + existing coverage tools.
+- TODO: normalize the final input contract.
+
+## Steps
+- TODO: replace this placeholder with deterministic execution steps.
+- Seed source snapshot: Использовать diff-aware analysis + existing coverage tools.
+
+## Stop Conditions
+- TODO: define the exact completion boundary.
+
+## Escalation Rules
+- Escalate when source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone.
+- TODO: add skill-specific escalation thresholds.
+
+## Anti-Patterns
+- Do not duplicate always-on repo guidance inside this selective skill.
+- Do not silently widen the owning role scope.
+- TODO: add skill-specific anti-patterns.
+
+## Denied Actions
+- Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks.

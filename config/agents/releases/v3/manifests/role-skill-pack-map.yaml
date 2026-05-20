@@ -1,0 +1,88 @@
+- role_id: orchestrator
+  default_skill_pack_refs:
+  - orchestrator_control_plane_core
+  notes: Seeded from A00 / OrchestratorAgent.
+- role_id: intake_agent
+  default_skill_pack_refs:
+  - intake_triage_core
+  notes: Seeded from A01 / IntakeAgent.
+- role_id: context_agent
+  default_skill_pack_refs:
+  - context_curation_core
+  notes: Seeded from A02 / ContextAgent.
+- role_id: spec_agent
+  default_skill_pack_refs:
+  - spec_contract_core
+  notes: Seeded from A03 / SpecAgent.
+- role_id: architect_agent
+  default_skill_pack_refs:
+  - architecture_decision_core
+  notes: Seeded from A04 / ArchitectAgent.
+- role_id: plan_agent
+  default_skill_pack_refs:
+  - plan_readiness_core
+  notes: Seeded from A05 / PlanAgent.
+- role_id: build_agent_backend
+  default_skill_pack_refs:
+  - build_backend_core
+  notes: Seeded from A06 / BuildAgent-Backend.
+- role_id: build_agent_frontend
+  default_skill_pack_refs:
+  - build_frontend_core
+  notes: Seeded from A07 / BuildAgent-Frontend.
+- role_id: build_agent_integrations
+  default_skill_pack_refs:
+  - build_integrations_core
+  notes: Seeded from A08 / BuildAgent-Integrations.
+- role_id: build_agent_data_migration
+  default_skill_pack_refs:
+  - build_data_migration_core
+  notes: Seeded from A09 / BuildAgent-DataMigration.
+- role_id: build_agent_infra_iac
+  default_skill_pack_refs:
+  - build_infra_iac_core
+  notes: Seeded from A10 / BuildAgent-InfraIaC.
+- role_id: test_agent
+  default_skill_pack_refs:
+  - test_verification_core
+  notes: Seeded from A11 / TestAgent.
+- role_id: review_agent
+  default_skill_pack_refs:
+  - review_quality_core
+  notes: Seeded from A12 / ReviewAgent.
+- role_id: security_agent
+  default_skill_pack_refs:
+  - security_governance_core
+  notes: Seeded from A13 / SecurityAgent.
+- role_id: docs_agent
+  default_skill_pack_refs:
+  - docs_sync_core
+  notes: Seeded from A14 / DocsAgent.
+- role_id: release_agent
+  default_skill_pack_refs:
+  - release_delivery_core
+  notes: Seeded from A15 / ReleaseAgent.
+- role_id: monitoring_agent
+  default_skill_pack_refs:
+  - monitoring_ops_core
+  notes: Seeded from A16 / MonitoringAgent.
+- role_id: reporter_agent
+  default_skill_pack_refs:
+  - reporting_writeback_core
+  notes: Seeded from A17 / ProvisionerAgent.
+- role_id: provisioner_agent
+  default_skill_pack_refs:
+  - provisioner_platform_core
+  notes: Seeded from A18 / DependencyAgent.
+- role_id: dependency_agent
+  default_skill_pack_refs:
+  - dependency_maintenance_core
+  notes: Seeded from A19 / EvalsAgent.
+- role_id: evals_agent
+  default_skill_pack_refs:
+  - evals_enablement_core
+  notes: Seeded from A20 / ReporterAgent.
+- role_id: integration_agent
+  default_skill_pack_refs:
+  - integration_boundary_core
+  notes: Seeded from A21 / IntegrationAgent.

@@ -1,0 +1,58 @@
+{
+  "id": "S26",
+  "version": "v1",
+  "name": "Supply Chain & Dependency Risk Analyzer",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "human_gate_required",
+  "when_to_use": [
+    "Оценивает обновления зависимостей, CVEs, transitive risk, semver breakage, changelog impact.",
+    "Seed rationale: Основа DependencyAgent и SecurityAgent."
+  ],
+  "inputs": [
+    "Поддержка lockfiles, advisories, breaking changes, rollout recommendation."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks.",
+    "Do not execute protected, irreversible, or approval-bound actions without the declared human gate."
+  ],
+  "human_gate": {
+    "required": true,
+    "zones": [
+      "architecture_sign_off",
+      "final_review_merge",
+      "protected_deploy"
+    ],
+    "notes": "Risk-sensitive skill: final execution must stay behind explicit human approval."
+  },
+  "description": "Оценивает обновления зависимостей, CVEs, transitive risk, semver breakage, changelog impact.",
+  "why": "Основа DependencyAgent и SecurityAgent.",
+  "download_ref": null,
+  "build_spec": "Поддержка lockfiles, advisories, breaking changes, rollout recommendation.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S26",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

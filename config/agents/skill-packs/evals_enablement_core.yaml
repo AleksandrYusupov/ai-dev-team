@@ -1,0 +1,33 @@
+pack_id: evals_enablement_core
+version: v1
+purpose: Ведёт диалог в комментариях и переводит внутреннее состояние системы в понятный human-readable
+  слой.
+skill_refs:
+- F06
+- F09
+- F13
+- S03
+- S43
+- S44
+optional_skill_refs: []
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - agent_review
+  - monitoring
+  - done
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: false
+  zones: []
+  notes: Produces evaluation artifacts; humans decide whether to change org policy.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A20
+- config/workflow/runtime_role_contracts.yaml#evals_agent

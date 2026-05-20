@@ -1,0 +1,53 @@
+{
+  "id": "S06",
+  "version": "v1",
+  "name": "Issue Contract Generator",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Генерирует строгий issue contract / frontmatter из brief или комментариев.",
+    "Seed rationale: База SpecAgent."
+  ],
+  "inputs": [
+    "Поля: goal, background, scope, non_goals, acceptance_criteria, verification_path, docs_links, primary_repo, affected_repos, dependencies, risk, done_when, open_questions."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Генерирует строгий issue contract / frontmatter из brief или комментариев.",
+  "why": "База SpecAgent.",
+  "download_ref": null,
+  "build_spec": "Поля: goal, background, scope, non_goals, acceptance_criteria, verification_path, docs_links, primary_repo, affected_repos, dependencies, risk, done_when, open_questions.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S06",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

@@ -1,0 +1,282 @@
+# Executable runtime subset only.
+# The canonical target operating model, rollout waves, and visible-actor policy live in operating_model.yaml.
+- owner_role: context_agent
+  primary_provider: claude
+  secondary_provider: codex
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: repo_shared_default
+  required_capabilities:
+    - shared_mcp
+    - context_pack_write
+    - kb_read
+
+- owner_role: intake_agent
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: repo_shared_default
+  required_capabilities:
+    - shared_mcp
+    - context_pack_read
+
+- owner_role: spec_agent
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: repo_shared_default
+  required_capabilities:
+    - shared_mcp
+    - context_pack_read
+    - repo_guidance_read
+
+- owner_role: architect_agent
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: repo_shared_default
+  required_capabilities:
+    - shared_mcp
+    - context_pack_read
+    - repo_guidance_read
+
+- owner_role: plan_agent
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: repo_shared_default
+  required_capabilities:
+    - shared_mcp
+    - context_pack_read
+    - repo_guidance_read
+
+- owner_role: build_agent
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: repo_shared_default
+  required_capabilities:
+    - shared_mcp
+    - workspace_access
+    - worktree_management
+    - artifact_upload
+
+- owner_role: build_agent_backend
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: repo_shared_default
+  required_capabilities:
+    - shared_mcp
+    - workspace_access
+    - worktree_management
+    - artifact_upload
+
+- owner_role: build_agent_integrations
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: integration_repo_shared
+  required_capabilities:
+    - shared_mcp
+    - workspace_access
+    - worktree_management
+    - artifact_upload
+    - network_docs_allowlist
+    - network_sandbox_api_allowlist
+    - secret_broker
+    - integration_lab
+
+- owner_role: test_agent
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: review_repo_shared
+  required_capabilities:
+    - shared_mcp
+    - workspace_access
+    - artifact_upload
+
+- owner_role: security_agent
+  primary_provider: claude
+  secondary_provider: codex
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: review_repo_shared
+  required_capabilities:
+    - shared_mcp
+    - workspace_access
+    - artifact_upload
+
+- owner_role: docs_agent
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: repo_shared_default
+  required_capabilities:
+    - shared_mcp
+    - workspace_access
+    - artifact_upload
+
+- owner_role: review_agent
+  primary_provider: claude
+  secondary_provider: codex
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: review_repo_shared
+  required_capabilities:
+    - shared_mcp
+    - workspace_access
+    - artifact_upload
+
+- owner_role: release_agent
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: release_repo_shared
+  required_capabilities:
+    - shared_mcp
+    - workspace_access
+    - artifact_upload
+
+- owner_role: reporter_agent
+  primary_provider: claude
+  secondary_provider: codex
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: host_shared_reporting
+  required_capabilities:
+    - shared_mcp
+    - context_pack_read
+
+- owner_role: monitoring_agent
+  primary_provider: claude
+  secondary_provider: codex
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: host_shared_reporting
+  required_capabilities:
+    - shared_mcp
+    - context_pack_read
+
+- owner_role: integration_agent
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: integration_repo_shared
+  required_capabilities:
+    - shared_mcp
+    - context_pack_read
+    - workspace_access
+    - repo_guidance_read
+    - artifact_upload
+    - network_docs_allowlist
+    - network_sandbox_api_allowlist
+    - secret_broker
+    - integration_lab
+
+- owner_role: orchestrator
+  primary_provider: codex
+  secondary_provider: claude
+  fallback_triggers:
+    - quota_exhausted
+    - rate_limited_exhausted
+    - auth_unavailable
+    - provider_unhealthy
+    - no_eligible_runner
+  max_provider_failovers: 1
+  mcp_profile_ref: host_shared_orchestrator
+  required_capabilities:
+    - shared_mcp
+    - context_pack_read

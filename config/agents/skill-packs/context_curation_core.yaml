@@ -1,0 +1,42 @@
+pack_id: context_curation_core
+version: v2
+purpose: Assembles authoritative, deduplicated context packs for downstream agents. Resolves multi-repo guidance, architecture docs, decision history, cross-repo dependencies, telemetry links, and auth data boundaries into a compact, referenceable context artifact.
+skill_refs:
+- F02
+- F03
+- F09
+- F10
+- F11
+- F13
+- S04
+- S05
+optional_skill_refs: []
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - triage
+  - needs_spec
+  - planned
+  - ready_for_build
+  task_types: []
+  requires_integration: false
+  notes: Activated as a supporting step whenever a downstream agent needs structured context. Invoked by the orchestrator before spec, plan, or build phases.
+required_mcp_refs:
+- repo-registry-mcp
+- knowledge-service-mcp
+denied_actions_overlay:
+- Do not write code or patches (repo.write_patch is denied for this pack).
+- Do not include raw secrets, tokens, or credential values in context packs.
+- Do not fabricate context — mark unavailable sources as known_unknown.
+- Do not mix context from different projects unless registry explicitly permits.
+- Do not duplicate always-on repo guidance verbatim — reference it with paths.
+human_gate_overlay:
+  required: false
+  zones: []
+  notes: Only escalates when source-of-truth inputs genuinely conflict or critical sources are missing.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A02
+- config/workflow/runtime_role_contracts.yaml#context_agent
+- config/agents/role-charters/context_agent.md

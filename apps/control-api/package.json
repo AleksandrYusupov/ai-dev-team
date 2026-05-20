@@ -1,0 +1,22 @@
+{
+  "name": "@ai-dev-team/control-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "compile": "rm -rf dist && tsc -b tsconfig.json --pretty false",
+    "build": "corepack pnpm run compile",
+    "typecheck": "tsc -p tsconfig.json --pretty false",
+    "dev": "corepack pnpm run compile && node dist/index.js",
+    "knowledge-sync": "corepack pnpm run compile && node dist/knowledge-sync.js",
+    "test": "corepack pnpm run compile && node --test --test-concurrency=1 dist/app.test.js dist/knowledge-sync.test.js dist/knowledge.test.js dist/phase6-runner-host.scaffold.test.js",
+    "test:integration": "corepack pnpm run compile && node --test --test-concurrency=1 \"dist/**/*.integration.test.js\""
+  },
+  "dependencies": {
+    "@ai-dev-team/config": "workspace:*",
+    "@ai-dev-team/db": "workspace:*",
+    "@ai-dev-team/shared": "workspace:*",
+    "@temporalio/client": "^1.15.0",
+    "fastify": "^5.2.1"
+  }
+}

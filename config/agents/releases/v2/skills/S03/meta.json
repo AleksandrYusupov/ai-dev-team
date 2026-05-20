@@ -1,0 +1,53 @@
+{
+  "id": "S03",
+  "version": "v1",
+  "name": "Clarifying Questions Composer",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Формирует один структурированный запрос к человеку вместо расплывчатого «нужны уточнения».",
+    "Seed rationale: Ключевой skill для Needs Input."
+  ],
+  "inputs": [
+    "Формат: what_missing, why_needed, options, preferred_answer_shape, blocking_vs_optional."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Формирует один структурированный запрос к человеку вместо расплывчатого «нужны уточнения».",
+  "why": "Ключевой skill для Needs Input.",
+  "download_ref": null,
+  "build_spec": "Формат: what_missing, why_needed, options, preferred_answer_shape, blocking_vs_optional.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S03",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

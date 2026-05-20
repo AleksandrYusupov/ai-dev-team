@@ -1,0 +1,4 @@
+- config_version: 4
+  status: published
+  is_active_for_new_runs: true
+  notes: ContextAgent as full runner lease agent at needs_spec, planned, ready_for_build. Added role execution policy for context_agent.

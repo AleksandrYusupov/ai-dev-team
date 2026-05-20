@@ -1,0 +1,64 @@
+{
+  "id": "S53",
+  "version": "v1",
+  "name": "Integration Runner Capability & Network Policy Matcher",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [
+    "vendor-docs-mcp",
+    "secret-broker-mcp",
+    "oauth-broker-mcp",
+    "integration-lab-mcp"
+  ],
+  "sensitivity_class": "credential_boundary",
+  "when_to_use": [
+    "Сопоставляет integration work с runner capability manifests: networkModesSupported, allowedDocDomains, allowedSandboxDomains, supportsBrowserConsent, supportsSecretBroker, supportsOAuthBroker, supportsIntegrationLab.",
+    "Seed rationale: Лучше не запускать интеграционную задачу, чем запустить её на раннере, который физически не может безопасно её выполнить."
+  ],
+  "inputs": [
+    "На входе issue contract + integration classification + runner manifest. На выходе compatible runners, denied reasons, required network mode, missing capability flags и escalation. Любая несоответствующая задача не должна лизиться non-integration runner'ом."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks.",
+    "Do not request, paste, persist, or summarize raw secrets, tokens, browser session dumps, or vendor-console exports.",
+    "Do not move credential truth into prompt bundles, context packs, repo docs, or Linear comments.",
+    "Do not collapse the metadata plane and credential plane into one artifact or one instruction surface."
+  ],
+  "human_gate": {
+    "required": true,
+    "zones": [
+      "credential_ownership_vendor_console_actions",
+      "protected_deploy"
+    ],
+    "notes": "Integration-sensitive skill: human approval remains mandatory around consent, credentials, and go-live."
+  },
+  "description": "Сопоставляет integration work с runner capability manifests: networkModesSupported, allowedDocDomains, allowedSandboxDomains, supportsBrowserConsent, supportsSecretBroker, supportsOAuthBroker, supportsIntegrationLab.",
+  "why": "Лучше не запускать интеграционную задачу, чем запустить её на раннере, который физически не может безопасно её выполнить.",
+  "download_ref": null,
+  "build_spec": "На входе issue contract + integration classification + runner manifest. На выходе compatible runners, denied reasons, required network mode, missing capability flags и escalation. Любая несоответствующая задача не должна лизиться non-integration runner'ом.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S53",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

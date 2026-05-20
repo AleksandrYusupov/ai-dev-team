@@ -1,0 +1,64 @@
+{
+  "id": "S50",
+  "version": "v1",
+  "name": "OAuth Consent & Callback Sanitizer",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [
+    "vendor-docs-mcp",
+    "secret-broker-mcp",
+    "oauth-broker-mcp",
+    "integration-lab-mcp"
+  ],
+  "sensitivity_class": "credential_boundary",
+  "when_to_use": [
+    "Обрабатывает OAuth callback/onboarding flow безопасно: сохраняет только sanitized callback facts, проверяет redirect URI and scope readiness, держит browser-based consent human-in-the-loop.",
+    "Seed rationale: OAuth automation ломается и по безопасности, и по UX, если callback, consent и token-exchange boundaries размыты."
+  ],
+  "inputs": [
+    "Для MVP: фиксировать provider, consent state, timestamp, requester, safe identifiers и next step; не сохранять raw authorization code. Для последующих фаз: подготовить boundary под broker-driven token exchange/refresh/revoke. Поддерживать PKCE-aware and state-aware reasoning."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks.",
+    "Do not request, paste, persist, or summarize raw secrets, tokens, browser session dumps, or vendor-console exports.",
+    "Do not move credential truth into prompt bundles, context packs, repo docs, or Linear comments.",
+    "Do not collapse the metadata plane and credential plane into one artifact or one instruction surface."
+  ],
+  "human_gate": {
+    "required": true,
+    "zones": [
+      "credential_ownership_vendor_console_actions",
+      "protected_deploy"
+    ],
+    "notes": "Integration-sensitive skill: human approval remains mandatory around consent, credentials, and go-live."
+  },
+  "description": "Обрабатывает OAuth callback/onboarding flow безопасно: сохраняет только sanitized callback facts, проверяет redirect URI and scope readiness, держит browser-based consent human-in-the-loop.",
+  "why": "OAuth automation ломается и по безопасности, и по UX, если callback, consent и token-exchange boundaries размыты.",
+  "download_ref": null,
+  "build_spec": "Для MVP: фиксировать provider, consent state, timestamp, requester, safe identifiers и next step; не сохранять raw authorization code. Для последующих фаз: подготовить boundary под broker-driven token exchange/refresh/revoke. Поддерживать PKCE-aware and state-aware reasoning.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S50",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

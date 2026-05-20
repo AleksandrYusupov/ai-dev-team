@@ -1,0 +1,34 @@
+pack_id: monitoring_ops_core
+version: v1
+purpose: Следит за post-deploy health и помогает в incident triage.
+skill_refs:
+- F06
+- F07
+- F11
+- F13
+- S32
+- S33
+- S34
+- S35
+- S54
+optional_skill_refs: []
+providers:
+- claude
+- codex
+activation_conditions:
+  statuses:
+  - monitoring
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - protected_deploy
+  notes: Novel incidents and destructive mitigations escalate to human operators.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A16
+- config/workflow/runtime_role_contracts.yaml#monitoring_agent

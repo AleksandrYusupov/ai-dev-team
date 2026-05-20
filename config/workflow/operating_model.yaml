@@ -1,0 +1,163 @@
+roles:
+  - role_id: orchestrator
+    wave: 1
+    category: control_plane
+    visible_in_linear: true
+  - role_id: intake_agent
+    wave: 1
+    category: control_plane
+    visible_in_linear: false
+  - role_id: context_agent
+    wave: 1
+    category: control_plane
+    visible_in_linear: false
+  - role_id: spec_agent
+    wave: 1
+    category: planning
+    visible_in_linear: false
+  - role_id: plan_agent
+    wave: 1
+    category: planning
+    visible_in_linear: false
+  - role_id: integration_agent
+    wave: 1
+    category: planning
+    visible_in_linear: false
+  - role_id: build_agent_backend
+    wave: 1
+    category: execution
+    visible_in_linear: false
+  - role_id: build_agent_integrations
+    wave: 1
+    category: execution
+    visible_in_linear: false
+  - role_id: test_agent
+    wave: 1
+    category: quality
+    visible_in_linear: false
+  - role_id: review_agent
+    wave: 1
+    category: quality
+    visible_in_linear: false
+  - role_id: reporter_agent
+    wave: 1
+    category: control_plane
+    visible_in_linear: false
+  - role_id: architect_agent
+    wave: 2
+    category: planning
+    visible_in_linear: false
+  - role_id: security_agent
+    wave: 2
+    category: quality
+    visible_in_linear: false
+  - role_id: docs_agent
+    wave: 2
+    category: quality
+    visible_in_linear: false
+  - role_id: release_agent
+    wave: 2
+    category: operations
+    visible_in_linear: false
+  - role_id: monitoring_agent
+    wave: 2
+    category: operations
+    visible_in_linear: false
+  - role_id: build_agent_frontend
+    wave: 2
+    category: execution
+    visible_in_linear: false
+  - role_id: build_agent_data_migration
+    wave: 3
+    category: execution
+    visible_in_linear: false
+  - role_id: build_agent_infra_iac
+    wave: 3
+    category: execution
+    visible_in_linear: false
+  - role_id: provisioner_agent
+    wave: 3
+    category: platform
+    visible_in_linear: false
+  - role_id: dependency_agent
+    wave: 3
+    category: platform
+    visible_in_linear: false
+  - role_id: evals_agent
+    wave: 3
+    category: platform
+    visible_in_linear: false
+
+visible_linear_surface:
+  primary_actor_role: orchestrator
+  optional_future_linear_actors:
+    - review_agent
+
+human_owned_zones:
+  - product_intent
+  - architecture_sign_off
+  - final_review_merge
+  - protected_deploy
+  - credential_ownership_vendor_console_actions
+
+taxonomy:
+  label_groups:
+    type:
+      - feature
+      - bug
+      - refactor
+      - research
+      - hotfix
+      - release
+      - integration
+      - maintenance
+      - provisioning
+    risk:
+      - low
+      - medium
+      - high
+      - critical
+    source:
+      - founder
+      - ask
+      - monitoring
+      - security
+      - dependency
+      - ops
+    mode:
+      - autonomous
+      - mixed
+      - manual
+    human:
+      - review
+      - approve
+      - decision
+      - risk_signoff
+      - credential_approval
+  reason_code_groups:
+    needs:
+      - business_decision
+      - missing_file
+      - scope_clarification
+      - credential_upload
+      - scope_approval
+      - oauth_consent
+      - redirect_uri_registration
+      - webhook_registration
+      - provider_console_action
+    blocked:
+      - vendor_outage
+      - sandbox_outage
+      - ci_outage
+      - dependency_pending
+      - waiting_external_merge
+      - invalid_scopes
+      - webhook_verification_failure
+      - token_revoked_no_recovery
+      - broker_outage
+    rework:
+      - spec_gap
+      - failed_review
+      - post_deploy_issue
+      - human_feedback
+      - integration_readiness_gap

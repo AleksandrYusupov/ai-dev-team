@@ -1,0 +1,57 @@
+{
+  "id": "R08",
+  "version": "v1",
+  "name": "GitHub Copilot Customization Library",
+  "category": "reusable",
+  "availability": "downloadable",
+  "kind": "reusable",
+  "runtime_dependency": false,
+  "reference_only_default": true,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "reference_only",
+  "when_to_use": [
+    "Официальная библиотека custom instructions, prompt files и custom agents для Copilot.",
+    "Seed rationale: Готовая база для path-specific instructions, reviewer prompts и language-specific guidance."
+  ],
+  "inputs": [
+    "TBD: formalize required inputs."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks.",
+    "Do not enable this skill as a runtime dependency until an explicit import decision is approved."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Официальная библиотека custom instructions, prompt files и custom agents для Copilot.",
+  "why": "Готовая база для path-specific instructions, reviewer prompts и language-specific guidance.",
+  "download_ref": {
+    "title": "Customization library",
+    "url": "https://docs.github.com/en/copilot/tutorials/customization-library"
+  },
+  "build_spec": null,
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/R08",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

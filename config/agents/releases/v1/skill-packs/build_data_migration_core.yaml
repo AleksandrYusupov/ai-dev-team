@@ -1,0 +1,37 @@
+pack_id: build_data_migration_core
+version: v1
+purpose: Ведёт safe schema/data changes и backfills.
+skill_refs:
+- F03
+- F04
+- F05
+- F07
+- F08
+- F13
+- S11
+- S18
+- S27
+optional_skill_refs: []
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - coding
+  - ready_to_merge
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - architecture_sign_off
+  - final_review_merge
+  - protected_deploy
+  notes: Data-shape changes require explicit human sign-off before merge or deploy.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A09
+- config/workflow/runtime_role_contracts.yaml#build_agent_data_migration

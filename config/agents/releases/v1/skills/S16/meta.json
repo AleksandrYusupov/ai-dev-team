@@ -1,0 +1,53 @@
+{
+  "id": "S16",
+  "version": "v1",
+  "name": "Integration/API Builder Pack",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Работа с third-party APIs, retries, rate limits, idempotency keys, webhook handling, auth, schema drift и безопасным потреблением secret aliases/handles вместо raw credentials.",
+    "Seed rationale: Для BuildAgent-Integrations под контролем IntegrationAgent."
+  ],
+  "inputs": [
+    "Должен генерировать resilient integration code and test doubles. Обязан уважать integration_brief и auth_decision_record, потреблять только sanitized auth artifacts/aliases, строить retry/backoff/idempotency, логирование, DLQ/replay hooks и failure classification."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Работа с third-party APIs, retries, rate limits, idempotency keys, webhook handling, auth, schema drift и безопасным потреблением secret aliases/handles вместо raw credentials.",
+  "why": "Для BuildAgent-Integrations под контролем IntegrationAgent.",
+  "download_ref": null,
+  "build_spec": "Должен генерировать resilient integration code and test doubles. Обязан уважать integration_brief и auth_decision_record, потреблять только sanitized auth artifacts/aliases, строить retry/backoff/idempotency, логирование, DLQ/replay hooks и failure classification.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S16",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

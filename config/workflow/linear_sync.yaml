@@ -1,0 +1,75 @@
+statuses:
+  - status_code: triage
+    linear_state_name: Triage
+    sync_enabled: true
+  - status_code: rework
+    linear_state_name: Rework
+    sync_enabled: true
+  - status_code: needs_spec
+    linear_state_name: Needs Spec
+    sync_enabled: true
+  - status_code: needs_input
+    linear_state_name: Needs Input
+    sync_enabled: true
+  - status_code: planned
+    linear_state_name: Planned
+    sync_enabled: true
+  - status_code: ready_for_build
+    linear_state_name: Ready for Build
+    sync_enabled: true
+  - status_code: coding
+    linear_state_name: Coding
+    sync_enabled: true
+  - status_code: agent_review
+    linear_state_name: Agent Review
+    sync_enabled: true
+  - status_code: blocked
+    linear_state_name: Blocked
+    sync_enabled: true
+  - status_code: needs_human_decision
+    linear_state_name: Needs Human Decision
+    sync_enabled: true
+  - status_code: ready_to_merge
+    linear_state_name: Ready to Merge
+    sync_enabled: true
+  - status_code: deploying
+    linear_state_name: Deploying
+    sync_enabled: true
+  - status_code: monitoring
+    linear_state_name: Monitoring
+    sync_enabled: true
+  - status_code: done
+    linear_state_name: Done
+    sync_enabled: true
+  - status_code: canceled
+    linear_state_name: Canceled
+    sync_enabled: true
+  - status_code: duplicate
+    linear_state_name: Duplicate
+    sync_enabled: true
+milestones:
+  - event_code: pr_opened
+    event_label: PR opened
+    post_comment: true
+    create_project_update: false
+    project_update_health:
+  - event_code: ci_failed
+    event_label: CI failed
+    post_comment: true
+    create_project_update: true
+    project_update_health: atRisk
+  - event_code: ci_green
+    event_label: CI green
+    post_comment: true
+    create_project_update: false
+    project_update_health:
+  - event_code: deploy_failed
+    event_label: Deploy failed
+    post_comment: true
+    create_project_update: true
+    project_update_health: offTrack
+  - event_code: deploy_healthy
+    event_label: Deploy healthy
+    post_comment: true
+    create_project_update: true
+    project_update_health: onTrack

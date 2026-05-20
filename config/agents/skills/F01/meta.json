@@ -1,0 +1,53 @@
+{
+  "id": "F01",
+  "version": "v1",
+  "name": "Issue Contract Parser",
+  "category": "foundation",
+  "availability": "custom",
+  "kind": "foundation",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Разбирает Linear issue/comment thread в нормализованный machine-readable contract: goal, scope, non-goals, acceptance criteria, verification path, repo, affected repos, risk, dependencies, open questions и, при необходимости, integration-specific fields.",
+    "Seed rationale: Даёт всем агентам одинаковую исходную модель задачи и резко снижает дрейф смысла между triage/spec/build/review."
+  ],
+  "inputs": [
+    "Входы: issue body, labels, status, project, comments, links. Выход: JSON contract + confidence + missing_fields. Должен уметь учитывать @ask, timestamps, decisions summary, repo registry и optional integration fields: provider_name, integration_kind, auth_scheme, required_credentials, secret_slots, required_scopes, oauth_redirect_uris, webhook_callback_urls, test_strategy, go_live_checklist, rollback_plan."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Разбирает Linear issue/comment thread в нормализованный machine-readable contract: goal, scope, non-goals, acceptance criteria, verification path, repo, affected repos, risk, dependencies, open questions и, при необходимости, integration-specific fields.",
+  "why": "Даёт всем агентам одинаковую исходную модель задачи и резко снижает дрейф смысла между triage/spec/build/review.",
+  "download_ref": null,
+  "build_spec": "Входы: issue body, labels, status, project, comments, links. Выход: JSON contract + confidence + missing_fields. Должен уметь учитывать @ask, timestamps, decisions summary, repo registry и optional integration fields: provider_name, integration_kind, auth_scheme, required_credentials, secret_slots, required_scopes, oauth_redirect_uris, webhook_callback_urls, test_strategy, go_live_checklist, rollback_plan.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/F01",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

@@ -1,0 +1,49 @@
+library_id: canonical-agent-library
+version: v2
+owners:
+- ai_dev_team/control-plane
+expected_role_count: 22
+expected_skill_count: 77
+expected_provider_overlay_count: 2
+release_model: immutable_snapshot
+layering_model: system_project_repository_agent_runtime_provider
+provider_overlay_dir: provider-overlays
+tool_policy_manifest_path: manifests/tooling-policy.yaml
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json
+- building_agents/ai_dept_agent_skill_matrix_v2.csv
+- building_agents/ai_dept_agents_and_skills_report_v2.md
+- building_agents/ai_dept_agents_and_skills_report_v3_external_links.md
+- config/agent-standards/manifests/library.yaml
+- config/agent-standards/manifests/layering-policy.yaml
+- config/agent-standards/project-profiles/ai_dev_team.yaml
+- config/workflow/operating_model.yaml
+- config/workflow/runtime_role_contracts.yaml
+- source/Маршруты в зависимости от разных задач.md
+always_on_guidance_refs:
+- AGENTS.md
+- PLAN.md
+- TESTPLAN.md
+- RELEASE.md
+compatibility_policy:
+  runtime_task_bundle_unchanged: true
+  db_persistence_unchanged: true
+  provider_wiring_unchanged: true
+  runner_distribution_out_of_scope: true
+versioning_policy:
+  frontmatter_version_required: true
+  silent_mutation_forbidden: true
+  placeholder_content_allowed: true
+  release_id_pattern: ^v[1-9][0-9]*$
+  immutable_published_releases: true
+  next_release_must_be_monotonic: true
+rollback_policy:
+  runner_host_rollout_policy: future-block
+  canonical_source_of_truth: config/agents
+  runtime_mirror_not_authoritative: true
+  published_release_required_for_rollout: true
+  first_release_may_omit_rollback_target: true
+reference_skill_policy:
+  materialized: true
+  runtime_dependency_default: false
+  reference_only_default: true

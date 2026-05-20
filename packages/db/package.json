@@ -1,0 +1,37 @@
+{
+  "name": "@ai-dev-team/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "compile": "rm -rf dist && tsc -b tsconfig.json --pretty false",
+    "build": "corepack pnpm run compile",
+    "typecheck": "tsc -p tsconfig.json --pretty false",
+    "migrate": "corepack pnpm run compile && node dist/migrate.js",
+    "validate-agent-config": "corepack pnpm run compile && node dist/validate-agent-config.js",
+    "validate-agent-standards": "corepack pnpm run compile && node dist/validate-agent-standards.js",
+    "validate-agent-release": "corepack pnpm run compile && node dist/validate-agent-release.js",
+    "publish-agent-release": "corepack pnpm run compile && node dist/publish-agent-release.js",
+    "publish-agent-runtime-release": "corepack pnpm run compile && node dist/publish-agent-runtime-release.js",
+    "validate-workflow-config": "corepack pnpm run compile && node dist/validate-workflow-config.js",
+    "publish-workflow-config": "corepack pnpm run compile && node dist/publish-workflow-config.js",
+    "test": "corepack pnpm run compile && node --test dist/agent-config/manifest-loader.test.js dist/standards-config/manifest-loader.test.js dist/workflow-config/manifest-loader.test.js dist/workflow-config/publish.test.js",
+    "test:integration": "corepack pnpm run compile && node --test --test-concurrency=1 dist/workflow-config/publish.integration.test.js dist/agent-runtime.integration.test.js dist/phase4.integration.test.js dist/phase5.integration.test.js dist/phase7-reference-repo.integration.test.js dist/integration-auth-plane.integration.test.js dist/phase6-runner-fabric.integration.test.js"
+  },
+  "dependencies": {
+    "@ai-dev-team/config": "workspace:*",
+    "@ai-dev-team/shared": "workspace:*",
+    "kysely": "^0.28.3",
+    "pg": "^8.14.1",
+    "yaml": "^2.8.1",
+    "zod": "^4.0.1"
+  }
+}

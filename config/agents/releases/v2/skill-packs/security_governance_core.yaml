@@ -1,0 +1,39 @@
+pack_id: security_governance_core
+version: v1
+purpose: Проверяет secure-by-design и secure-by-implementation аспекты.
+skill_refs:
+- F02
+- F07
+- F08
+- F13
+- S24
+- S25
+- S26
+- S49
+- S50
+- S51
+optional_skill_refs: []
+providers:
+- claude
+- codex
+activation_conditions:
+  statuses:
+  - agent_review
+  - ready_to_merge
+  - needs_human_decision
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - architecture_sign_off
+  - final_review_merge
+  - credential_ownership_vendor_console_actions
+  notes: Critical security, privacy, and auth-boundary findings require human action.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A13
+- config/workflow/runtime_role_contracts.yaml#security_agent

@@ -1,0 +1,50 @@
+pack_id: integration_boundary_core
+version: v1
+purpose: 'Ведёт внешний integration lifecycle как отдельный readiness/auth/onboarding/control-plane поток:
+  классифицирует integration kind и auth scheme, готовит sanitized integration artifacts, держит build-loop
+  вне Ready for Build до закрытия prerequisites и доводит интеграцию до go-live boundary.'
+skill_refs:
+- F01
+- F02
+- F03
+- F06
+- F07
+- F08
+- F10
+- F11
+- F13
+- S46
+- S47
+- S48
+- S49
+- S50
+- S51
+- S52
+- S53
+- S54
+optional_skill_refs: []
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - planned
+  - needs_input
+  - ready_for_build
+  - ready_to_merge
+  task_types:
+  - integration
+  requires_integration: true
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - credential_ownership_vendor_console_actions
+  - protected_deploy
+  notes: Vendor-console actions, consent, scope approval, and go-live remain human-approved.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A21
+- config/workflow/runtime_role_contracts.yaml#integration_agent

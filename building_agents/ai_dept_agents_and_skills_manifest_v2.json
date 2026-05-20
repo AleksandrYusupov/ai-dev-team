@@ -1,0 +1,2290 @@
+{
+  "meta": {
+    "title": "AI development department agents and skills manifest",
+    "version": "1.1",
+    "visible_linear_recommendation": "one visible orchestration agent, optional separate review agent later",
+    "notes": [
+      "Agents are capability-based, not org-chart clones",
+      "Human remains accountable for product intent, architecture sign-off, final review/merge, protected deployments",
+      "Explicitly separates IntegrationAgent from BuildAgent-Integrations and adds a dedicated Secrets/Auth plane boundary for credential/auth metadata."
+    ]
+  },
+  "human_roles": [
+    {
+      "role": "Product owner / founder",
+      "keep_human": "yes",
+      "why": "Отвечает за intent, priority, trade-offs и final business choice.",
+      "agent_support": "IntakeAgent, SpecAgent, ReporterAgent могут подготавливать варианты, но не владеть intent."
+    },
+    {
+      "role": "Engineering lead / manager",
+      "keep_human": "yes",
+      "why": "Нужен для ownership, staffing, conflict resolution, standards, hiring, coaching, escalation.",
+      "agent_support": "EvalsAgent, ReporterAgent и OrchestratorAgent дают данные и варианты, но не заменяют accountable owner."
+    },
+    {
+      "role": "Final code owner / reviewer",
+      "keep_human": "yes",
+      "why": "GitHub branch protection, CODEOWNERS и safe delivery best practices предполагают независимый human review.",
+      "agent_support": "ReviewAgent и SecurityAgent делают baseline review до человека."
+    },
+    {
+      "role": "Deployment approver / reliability owner",
+      "keep_human": "yes",
+      "why": "Protected environments, high-risk releases, error budget policy и incident judgment должны оставаться human-led.",
+      "agent_support": "ReleaseAgent и MonitoringAgent сокращают toil и ускоряют диагностику."
+    },
+    {
+      "role": "Credential owner / integration approver",
+      "keep_human": "yes",
+      "why": "Продовые credentials, redirect URI registration, scope approval, browser-based consent и vendor console actions — это точки ответственности и риска, которые нельзя полностью отдавать автономии.",
+      "agent_support": "IntegrationAgent готовит credential requests, validation reports, auth decision records и go-live checklists; SecurityAgent проверяет posture."
+    }
+  ],
+  "agents": [
+    {
+      "id": "A00",
+      "name": "OrchestratorAgent",
+      "tier": "core",
+      "visible_in_linear": "yes (единственный основной app user, опционально плюс @review позже)",
+      "mission": "Управляет state machine issue, запускает/останавливает специализированных агентов, следит за human gates, publishes high-signal status back to Linear.",
+      "why": "Это не просто dispatcher. Это control-plane лицо всей системы.",
+      "responsibilities": [
+        "Следить за allowed status transitions и запускать правильный workflow на каждом этапе",
+        "Выбирать нужного внутреннего агента/подагента по type, risk, repo, status",
+        "Публиковать summaries, blockers, next actions и links на артефакты",
+        "Уважать human gates на review/merge/deploy и high-risk work",
+        "Эскалировать при low confidence, external blocker, policy violation",
+        "Не переводить integration-heavy issue в Ready for Build, пока не закрыты credential prerequisites, consent steps и runner capability requirements.",
+        "Различать Needs Input vs Blocked для integration-задач: человек/consent/console action против vendor/sandbox/broker outage."
+      ],
+      "inputs": [
+        "Issue contract",
+        "status change",
+        "comment/@ask signal",
+        "PR/CI/deploy events",
+        "registry and policy data"
+      ],
+      "outputs": [
+        "state transitions",
+        "agent assignments",
+        "Linear comments",
+        "externalUrls",
+        "escalations",
+        "reason codes"
+      ],
+      "human_gate": "Да — всегда уважает Needs Input / Needs Human Decision / protected environments.",
+      "kpis": [
+        "cycle time by status",
+        "stuck issue rate",
+        "rework loop rate",
+        "handoff latency",
+        "summary quality"
+      ],
+      "skills": [
+        "F01",
+        "F02",
+        "F03",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F13",
+        "S01",
+        "S03",
+        "S43",
+        "S44",
+        "S48",
+        "S52",
+        "S53"
+      ]
+    },
+    {
+      "id": "A01",
+      "name": "IntakeAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Нормализует новый вход: типизирует задачу, проверяет полноту, ищет дубликаты, определяет маршрут.",
+      "why": "Сильный triage экономит большую часть последующего шума.",
+      "responsibilities": [
+        "Classify type/risk/source/mode",
+        "Detect duplicates and near-duplicates",
+        "Identify missing input",
+        "Suggest primary repo and next status",
+        "Выявлять, что задача требует IntegrationAgent: external API, service-to-service или webhook."
+      ],
+      "inputs": [
+        "new issue",
+        "reopened issue",
+        "monitoring bug",
+        "user comments"
+      ],
+      "outputs": [
+        "triage classification",
+        "next-status recommendation",
+        "duplicate candidates",
+        "clarifying question draft"
+      ],
+      "human_gate": "Только при ambiguous scope/high-risk/low-confidence routing.",
+      "kpis": [
+        "triage accuracy",
+        "duplicate catch rate",
+        "needs-input precision",
+        "routing accuracy"
+      ],
+      "skills": [
+        "F01",
+        "F02",
+        "F09",
+        "F10",
+        "F13",
+        "S01",
+        "S02",
+        "S03",
+        "S46"
+      ]
+    },
+    {
+      "id": "A02",
+      "name": "ContextAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Собирает authoritative context pack для остальных агентов.",
+      "why": "Контекст — главный мультипликатор качества в агентной разработке.",
+      "responsibilities": [
+        "Pull repo guidance",
+        "Retrieve docs/ADR/runbooks",
+        "Summarize comment history",
+        "Resolve repo/project/service dependencies",
+        "Resolve sanitized integration artifact references without exposing auth truth."
+      ],
+      "inputs": [
+        "issue contract",
+        "docs links",
+        "registry",
+        "repo metadata",
+        "comment log"
+      ],
+      "outputs": [
+        "context pack",
+        "decision summary",
+        "authoritative links",
+        "known unknowns"
+      ],
+      "human_gate": "Нет, кроме missing source-of-truth conflicts.",
+      "kpis": [
+        "context relevance",
+        "missing-context incident rate",
+        "token efficiency"
+      ],
+      "skills": [
+        "F02",
+        "F03",
+        "F09",
+        "F10",
+        "F11",
+        "F13",
+        "S04",
+        "S05"
+      ]
+    },
+    {
+      "id": "A03",
+      "name": "SpecAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Превращает brief в исполнимый контракт задачи.",
+      "why": "AI-first delivery лучше всего работает на well-specified work.",
+      "responsibilities": [
+        "Generate issue contract",
+        "Separate scope/non-goals",
+        "Engineer acceptance criteria",
+        "Design verification path",
+        "Create SPEC draft when needed"
+      ],
+      "inputs": [
+        "brief",
+        "comments",
+        "context pack",
+        "existing docs"
+      ],
+      "outputs": [
+        "issue contract",
+        "SPEC.md",
+        "open questions",
+        "risk notes",
+        "integration extension fields when the task touches external systems"
+      ],
+      "human_gate": "Да, если остаются продуктовые или риск-решения.",
+      "kpis": [
+        "spec completeness",
+        "build rework caused by spec gaps",
+        "clarification count"
+      ],
+      "skills": [
+        "F01",
+        "F02",
+        "F06",
+        "F07",
+        "F13",
+        "R01",
+        "R07",
+        "S06",
+        "S07",
+        "S08"
+      ]
+    },
+    {
+      "id": "A04",
+      "name": "ArchitectAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Готовит архитектурные решения и ADR для risky/cross-cutting work.",
+      "why": "Нужен отдельный слой между spec и implementation для auth/payments/migrations/cross-repo redesign.",
+      "responsibilities": [
+        "Option matrix",
+        "Cross-repo impact analysis",
+        "Migration design",
+        "Rollout/rollback architecture",
+        "ADR authoring",
+        "Design auth/onboarding boundaries for high-risk integrations when needed."
+      ],
+      "inputs": [
+        "spec",
+        "context pack",
+        "repo architecture",
+        "dependency graph"
+      ],
+      "outputs": [
+        "ADR.md",
+        "option matrix",
+        "impact map",
+        "recommended decision"
+      ],
+      "human_gate": "Да — архитектурный выбор и high-risk sign-off.",
+      "kpis": [
+        "architectural rework rate",
+        "incidents from design flaws",
+        "decision turnaround time"
+      ],
+      "skills": [
+        "F02",
+        "F06",
+        "F07",
+        "F10",
+        "F13",
+        "R01",
+        "S09",
+        "S10",
+        "S11"
+      ]
+    },
+    {
+      "id": "A05",
+      "name": "PlanAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Декомпозирует контракт на milestones/sub-issues и execution plan.",
+      "why": "План нужен для long-horizon autonomy и безопасного параллелизма.",
+      "responsibilities": [
+        "Sub-issue generation",
+        "Dependency sequencing",
+        "Plan.md generation",
+        "Execution-ready checklist",
+        "Sequence integration prerequisites before implementation and release work."
+      ],
+      "inputs": [
+        "issue contract",
+        "ADR",
+        "registry",
+        "context pack"
+      ],
+      "outputs": [
+        "PLAN.md",
+        "sub-issues",
+        "dependency graph",
+        "build-ready recommendation"
+      ],
+      "human_gate": "Да, если план меняет scope/ownership or creates large risky decomposition.",
+      "kpis": [
+        "plan accuracy",
+        "blocked work due to bad sequencing",
+        "sub-issue completion rate"
+      ],
+      "skills": [
+        "F01",
+        "F06",
+        "F10",
+        "F13",
+        "R01",
+        "S12",
+        "S13"
+      ]
+    },
+    {
+      "id": "A06",
+      "name": "BuildAgent-Backend",
+      "tier": "core",
+      "visible_in_linear": "no (internal profile/subagent)",
+      "mission": "Реализует backend code changes в пределах узкого плана и repo conventions.",
+      "why": "Основной coding worker для API/services/business logic.",
+      "responsibilities": [
+        "Implement scoped code changes",
+        "Run targeted tests",
+        "Update docs touched by code",
+        "Prepare diff/PR notes"
+      ],
+      "inputs": [
+        "plan/spec",
+        "context pack",
+        "repo guidance",
+        "existing code"
+      ],
+      "outputs": [
+        "commits/diff",
+        "test outputs",
+        "updated docs",
+        "PR draft"
+      ],
+      "human_gate": "Нужен на final review/merge; эскалация при ambiguity or architecture drift.",
+      "kpis": [
+        "first-pass pass rate",
+        "scoped diff discipline",
+        "escaped defects",
+        "rework from overreach"
+      ],
+      "skills": [
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F13",
+        "R10",
+        "S14",
+        "S27"
+      ]
+    },
+    {
+      "id": "A07",
+      "name": "BuildAgent-Frontend",
+      "tier": "core",
+      "visible_in_linear": "no (internal profile/subagent)",
+      "mission": "Реализует UI/UX/code changes с соблюдением design system, a11y и state flows.",
+      "why": "Frontend work имеет свой набор рисков и нуждается в отдельном skill pack.",
+      "responsibilities": [
+        "Build components/pages",
+        "Respect loading/error/empty states",
+        "Add analytics/a11y hooks",
+        "Update docs/screenshots if required"
+      ],
+      "inputs": [
+        "spec",
+        "design guidance",
+        "frontend codebase"
+      ],
+      "outputs": [
+        "UI diff",
+        "component tests",
+        "updated stories/docs"
+      ],
+      "human_gate": "Нужен на UX-sensitive or public-facing final review.",
+      "kpis": [
+        "UI defect escape rate",
+        "a11y compliance",
+        "visual regression rate"
+      ],
+      "skills": [
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F13",
+        "R05",
+        "S15",
+        "S27"
+      ]
+    },
+    {
+      "id": "A08",
+      "name": "BuildAgent-Integrations",
+      "tier": "core",
+      "visible_in_linear": "no (internal profile/subagent)",
+      "mission": "Реализует adapter/client/webhook code внутри границ, заранее определённых IntegrationAgent и Secrets/Auth plane.",
+      "why": "Нужен отдельный execution profile для внешних интеграций, но auth/onboarding/control-plane обязанности не должны смешиваться с кодированием.",
+      "responsibilities": [
+        "Implement resilient API clients, adapters and webhook handlers",
+        "Respect integration_brief, auth_decision_record and webhook_contract",
+        "Consume secret aliases/handles and sanitized auth artifacts instead of raw credentials",
+        "Handle retries, rate limits, idempotency and schema drift",
+        "Add observability hooks, failure-mode notes and integration-specific docs updates"
+      ],
+      "inputs": [
+        "spec",
+        "integration_brief",
+        "auth_decision_record",
+        "webhook_contract",
+        "sanitized artifact refs",
+        "registry"
+      ],
+      "outputs": [
+        "integration code",
+        "contract tests",
+        "failure-mode notes",
+        "observability hooks",
+        "updated docs/runbooks"
+      ],
+      "human_gate": "Да, если legal/compliance/customer-impacting integration change, production credential access, vendor console action или risky auth decision.",
+      "kpis": [
+        "integration incident rate",
+        "webhook correctness",
+        "retry/idempotency coverage",
+        "auth-boundary violations avoided"
+      ],
+      "skills": [
+        "F03",
+        "F04",
+        "F05",
+        "F07",
+        "F08",
+        "F13",
+        "R06",
+        "S16",
+        "S27",
+        "S51",
+        "S54"
+      ]
+    },
+    {
+      "id": "A09",
+      "name": "BuildAgent-DataMigration",
+      "tier": "core",
+      "visible_in_linear": "no (internal profile/subagent)",
+      "mission": "Ведёт safe schema/data changes и backfills.",
+      "why": "Это отдельная дисциплина с очень высокой ценой ошибки.",
+      "responsibilities": [
+        "Design migrations",
+        "Keep backward compatibility",
+        "Prepare expand/migrate/contract steps",
+        "Verify data correctness"
+      ],
+      "inputs": [
+        "migration plan",
+        "schema context",
+        "data volume/constraints"
+      ],
+      "outputs": [
+        "migration scripts",
+        "verification queries",
+        "rollback notes"
+      ],
+      "human_gate": "Да — почти всегда требуется human sign-off.",
+      "kpis": [
+        "migration rollback rate",
+        "data integrity incidents",
+        "downtime introduced"
+      ],
+      "skills": [
+        "F03",
+        "F04",
+        "F05",
+        "F07",
+        "F08",
+        "F13",
+        "S11",
+        "S18",
+        "S27"
+      ]
+    },
+    {
+      "id": "A10",
+      "name": "BuildAgent-InfraIaC",
+      "tier": "core",
+      "visible_in_linear": "no (internal profile/subagent)",
+      "mission": "Меняет infrastructure-as-code, CI/CD и environment configs по golden path.",
+      "why": "Infra changes требуют отдельного permission model и security posture.",
+      "responsibilities": [
+        "Modify IaC safely",
+        "Respect least privilege",
+        "Bootstrap or update CI/CD",
+        "Prepare rollout notes"
+      ],
+      "inputs": [
+        "infra plan",
+        "environment policy",
+        "repo templates"
+      ],
+      "outputs": [
+        "IaC diff",
+        "pipeline updates",
+        "plan/apply notes",
+        "rollback path"
+      ],
+      "human_gate": "Да — protected environments and high-risk infra changes.",
+      "kpis": [
+        "failed deploys from infra changes",
+        "policy violations",
+        "time to safe rollout"
+      ],
+      "skills": [
+        "F03",
+        "F04",
+        "F05",
+        "F07",
+        "F08",
+        "F13",
+        "S17",
+        "S27",
+        "S37"
+      ]
+    },
+    {
+      "id": "A11",
+      "name": "TestAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Строит и выполняет правильную стратегию доказательства качества.",
+      "why": "Лучшие команды выносят thinking about verification в отдельную capability, а не «добавляют тесты в конце».",
+      "responsibilities": [
+        "Choose test mix",
+        "Write tests",
+        "Run fail-first loop",
+        "Analyze coverage gaps",
+        "Surface flaky/insufficient tests"
+      ],
+      "inputs": [
+        "spec",
+        "diff",
+        "existing tests",
+        "coverage data"
+      ],
+      "outputs": [
+        "new tests",
+        "test plan",
+        "gap report",
+        "verification results"
+      ],
+      "human_gate": "Нет, кроме safety-critical test limitations.",
+      "kpis": [
+        "test gap catch rate",
+        "flaky test reduction",
+        "bugs caught before human review"
+      ],
+      "skills": [
+        "F05",
+        "F06",
+        "F07",
+        "F13",
+        "R03",
+        "S19",
+        "S20",
+        "S21",
+        "S52"
+      ]
+    },
+    {
+      "id": "A12",
+      "name": "ReviewAgent",
+      "tier": "core",
+      "visible_in_linear": "optional as separate @review later",
+      "mission": "Делает независимый semantic review изменений до human review.",
+      "why": "AI review — отличный baseline, но не заменяет final ownership review.",
+      "responsibilities": [
+        "Semantic diff review",
+        "Regression hunting",
+        "Performance/scalability review",
+        "Review summary and risk ranking"
+      ],
+      "inputs": [
+        "diff",
+        "spec",
+        "context pack",
+        "test results"
+      ],
+      "outputs": [
+        "review findings",
+        "severity-ranked comments",
+        "go/no-go recommendation"
+      ],
+      "human_gate": "Да — человек владеет final review and merge.",
+      "kpis": [
+        "high-severity bugs found pre-merge",
+        "false positive rate",
+        "comment usefulness"
+      ],
+      "skills": [
+        "F02",
+        "F05",
+        "F06",
+        "F07",
+        "F13",
+        "S21",
+        "S22",
+        "S23"
+      ]
+    },
+    {
+      "id": "A13",
+      "name": "SecurityAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Проверяет secure-by-design и secure-by-implementation аспекты.",
+      "why": "Security — отдельная enabling capability, не просто подвид code review.",
+      "responsibilities": [
+        "Threat modeling",
+        "Secure coding review",
+        "Supply chain/dependency risk",
+        "Secrets/permissions review",
+        "Security sign-off recommendation"
+      ],
+      "inputs": [
+        "spec/ADR",
+        "diff",
+        "deps",
+        "env policies",
+        "data classification"
+      ],
+      "outputs": [
+        "security findings",
+        "mitigation recommendations",
+        "risk sign-off input"
+      ],
+      "human_gate": "Да — для critical/high findings, auth/data/privacy/deletion/security boundary changes.",
+      "kpis": [
+        "security bugs caught pre-merge",
+        "critical findings turnaround",
+        "false negative postmortems"
+      ],
+      "skills": [
+        "F02",
+        "F07",
+        "F08",
+        "F13",
+        "S24",
+        "S25",
+        "S26",
+        "S49",
+        "S50",
+        "S51"
+      ]
+    },
+    {
+      "id": "A14",
+      "name": "DocsAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Поддерживает docs как часть delivery, а не как послесловие.",
+      "why": "Сильные AI-native команды вшивают documentation update прямо в pipeline.",
+      "responsibilities": [
+        "Update README/runbooks/ADR index",
+        "Generate diagrams/summaries",
+        "Prepare release notes",
+        "Keep project docs current",
+        "Preserve raw-secret prohibition in docs, runbooks and integration notes."
+      ],
+      "inputs": [
+        "diff",
+        "spec",
+        "ADR",
+        "plan",
+        "release artifacts"
+      ],
+      "outputs": [
+        "updated docs",
+        "changelog",
+        "runbook changes",
+        "documentation debt notes"
+      ],
+      "human_gate": "Да — для customer-facing or policy-critical docs.",
+      "kpis": [
+        "docs staleness",
+        "undocumented change rate",
+        "review edits per doc"
+      ],
+      "skills": [
+        "F03",
+        "F06",
+        "F13",
+        "R07",
+        "S27",
+        "S28"
+      ]
+    },
+    {
+      "id": "A15",
+      "name": "ReleaseAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Ведёт merge/deploy/smoke/rollback orchestration и release communication.",
+      "why": "Release — отдельная инженерная дисциплина, а не «последний git merge».",
+      "responsibilities": [
+        "Check merge gate",
+        "Trigger merge/deploy flows",
+        "Run smoke tests",
+        "Publish release summary",
+        "Recommend rollback/mitigation when needed",
+        "Use integration go-live checklists and preserve raw-secret prohibition in release notes."
+      ],
+      "inputs": [
+        "PR status",
+        "checks",
+        "environment policy",
+        "smoke plan"
+      ],
+      "outputs": [
+        "merge readiness",
+        "deployment progress",
+        "smoke results",
+        "rollback recommendation"
+      ],
+      "human_gate": "Да — protected branches, required reviewers, protected environments.",
+      "kpis": [
+        "failed deployment rate",
+        "time to detect bad deploy",
+        "rollback correctness"
+      ],
+      "skills": [
+        "F05",
+        "F06",
+        "F07",
+        "F11",
+        "F13",
+        "S28",
+        "S29",
+        "S30",
+        "S31",
+        "S54"
+      ]
+    },
+    {
+      "id": "A16",
+      "name": "MonitoringAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Следит за post-deploy health и помогает в incident triage.",
+      "why": "Done не должно наступать сразу после deploy.",
+      "responsibilities": [
+        "Observe SLO/SLI impact",
+        "Analyze logs/traces/metrics",
+        "Compare canary vs baseline",
+        "Draft postmortem timeline",
+        "Reopen/rework recommendation",
+        "Watch vendor/auth/webhook failure signals and integration-specific health indicators."
+      ],
+      "inputs": [
+        "telemetry",
+        "deployment event",
+        "recent diff",
+        "alerts"
+      ],
+      "outputs": [
+        "monitoring summary",
+        "incident triage",
+        "rework trigger",
+        "postmortem draft"
+      ],
+      "human_gate": "Да — для novel incidents, customer-impacting changes, destructive mitigations.",
+      "kpis": [
+        "MTTD/MTTR assist",
+        "escaped issue detection",
+        "accuracy of suspect-change detection"
+      ],
+      "skills": [
+        "F06",
+        "F07",
+        "F11",
+        "F13",
+        "S32",
+        "S33",
+        "S34",
+        "S35",
+        "S54"
+      ]
+    },
+    {
+      "id": "A17",
+      "name": "ProvisionerAgent",
+      "tier": "platform",
+      "visible_in_linear": "no",
+      "mission": "Поднимает новые repo/project scaffolds и golden paths.",
+      "why": "Это platform-team функция, которая ускоряет все stream-aligned agents.",
+      "responsibilities": [
+        "Create repo scaffolds",
+        "Bootstrap CI/CD and checks",
+        "Write initial AGENTS/CLAUDE guidance",
+        "Sync registry/project links"
+      ],
+      "inputs": [
+        "project template",
+        "registry policy",
+        "repo kind",
+        "team defaults"
+      ],
+      "outputs": [
+        "new repo",
+        "pipeline skeleton",
+        "guidance files",
+        "registry entry"
+      ],
+      "human_gate": "Да — on repo creation, secrets setup, environment access.",
+      "kpis": [
+        "time to first productive repo",
+        "template drift",
+        "golden-path adoption"
+      ],
+      "skills": [
+        "F03",
+        "F08",
+        "F10",
+        "R04",
+        "R10",
+        "S36",
+        "S37",
+        "S38"
+      ]
+    },
+    {
+      "id": "A18",
+      "name": "DependencyAgent",
+      "tier": "platform",
+      "visible_in_linear": "no",
+      "mission": "Держит зависимости, flags и stale code в здоровом состоянии.",
+      "why": "Это отдельный поток ценности: меньше security debt, меньше toil, меньше hidden regressions.",
+      "responsibilities": [
+        "Dependency refresh",
+        "Changelog impact analysis",
+        "Flag cleanup",
+        "Deprecation issue creation",
+        "Low-risk maintenance PRs"
+      ],
+      "inputs": [
+        "dependency graph",
+        "advisories",
+        "repo metadata",
+        "usage signals"
+      ],
+      "outputs": [
+        "maintenance PRs",
+        "risk summaries",
+        "cleanup issues"
+      ],
+      "human_gate": "Да — for major version jumps and critical prod-risk updates.",
+      "kpis": [
+        "mean dependency age",
+        "security patch latency",
+        "stale flag count"
+      ],
+      "skills": [
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "S26",
+        "S39",
+        "S40"
+      ]
+    },
+    {
+      "id": "A19",
+      "name": "EvalsAgent",
+      "tier": "enablement",
+      "visible_in_linear": "no",
+      "mission": "Измеряет качество агентов, skills и overall engineering system.",
+      "why": "Это enabling team capability для непрерывного улучшения.",
+      "responsibilities": [
+        "Build eval sets",
+        "Benchmark skill versions",
+        "Interpret DORA/SPACE/PR metrics",
+        "Find rework patterns",
+        "Recommend interventions"
+      ],
+      "inputs": [
+        "agent outputs",
+        "PR outcomes",
+        "review comments",
+        "incidents",
+        "usage metrics"
+      ],
+      "outputs": [
+        "quality dashboards",
+        "benchmark reports",
+        "skill change recommendations",
+        "operating reviews"
+      ],
+      "human_gate": "Нет, но решения об org/process change принимает человек.",
+      "kpis": [
+        "eval coverage",
+        "signal-to-noise of metrics",
+        "time to detect degradation"
+      ],
+      "skills": [
+        "F12",
+        "R02",
+        "S41",
+        "S42",
+        "S45"
+      ]
+    },
+    {
+      "id": "A20",
+      "name": "ReporterAgent",
+      "tier": "core",
+      "visible_in_linear": "no",
+      "mission": "Ведёт диалог в комментариях и переводит внутреннее состояние системы в понятный human-readable слой.",
+      "why": "Без него агентный отдел будет выглядеть «немым» и непредсказуемым.",
+      "responsibilities": [
+        "Respond in comments",
+        "Summarize progress",
+        "Surface blockers/questions",
+        "Resume work on @ask",
+        "Publish final summaries",
+        "Never echo raw credentials, raw token state or unsafe troubleshooting details back into Linear comments."
+      ],
+      "inputs": [
+        "workflow state",
+        "agent artifacts",
+        "comments",
+        "decision log"
+      ],
+      "outputs": [
+        "Linear comments",
+        "human questions",
+        "status digests",
+        "completion summaries"
+      ],
+      "human_gate": "Он не принимает product/architecture/deploy решения, только формулирует их для человека.",
+      "kpis": [
+        "comment response usefulness",
+        "clarification efficiency",
+        "stakeholder trust"
+      ],
+      "skills": [
+        "F06",
+        "F09",
+        "F13",
+        "S03",
+        "S43",
+        "S44"
+      ]
+    },
+    {
+      "id": "A21",
+      "name": "IntegrationAgent",
+      "tier": "core",
+      "visible_in_linear": "no (internal orchestration role, not separate Linear assignee)",
+      "mission": "Ведёт внешний integration lifecycle как отдельный readiness/auth/onboarding/control-plane поток: классифицирует integration kind и auth scheme, готовит sanitized integration artifacts, держит build-loop вне Ready for Build до закрытия prerequisites и доводит интеграцию до go-live boundary.",
+      "why": "Внешние интеграции ломаются не только кодом, но и неверной auth-моделью, отсутствующим consent, плохим webhook hardening, sandbox drift и утечкой секретов. Поэтому одного BuildAgent-Integrations недостаточно.",
+      "responsibilities": [
+        "Classify provider, integration_kind and auth_scheme",
+        "Produce integration_brief and auth_decision_record",
+        "Extend/validate issue contract fields for provider, scopes, redirect URIs, callback URLs, test strategy, go-live checklist and rollback plan",
+        "Request credential prerequisites through structured Needs Input without asking for raw credential paste",
+        "Work against metadata-only Secrets/Auth plane: secret slots, client registrations, consent state, token-handle metadata, webhook registrations, validation runs",
+        "Validate sandbox/onboarding state and runner/network capability fit",
+        "Drive adapter implementation, webhook hardening, observability and rollout checklists together with BuildAgent-Integrations, SecurityAgent, ReleaseAgent and MonitoringAgent"
+      ],
+      "inputs": [
+        "issue contract",
+        "vendor docs",
+        "existing client registrations and webhook facts",
+        "sandbox/consent status",
+        "runner capability manifests",
+        "security and release policy"
+      ],
+      "outputs": [
+        "integration_brief",
+        "auth_decision_record",
+        "credential_request",
+        "credential_validation_report",
+        "oauth_consent_session",
+        "webhook_contract",
+        "webhook_validation_report",
+        "integration_smoke_report",
+        "integration_go_live_checklist"
+      ],
+      "human_gate": "Да — browser-based consent, production credential use, redirect URI registration, scope approval, vendor console actions и final go-live decisions остаются human-approved.",
+      "kpis": [
+        "time-to-integration-readiness",
+        "credential prerequisite loop time",
+        "webhook verification pass rate",
+        "integration readiness accuracy",
+        "secrets policy violations prevented",
+        "go-live regression rate"
+      ],
+      "skills": [
+        "F01",
+        "F02",
+        "F03",
+        "F06",
+        "F07",
+        "F08",
+        "F10",
+        "F11",
+        "F13",
+        "S46",
+        "S47",
+        "S48",
+        "S49",
+        "S50",
+        "S51",
+        "S52",
+        "S53",
+        "S54"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "id": "F01",
+      "name": "Issue Contract Parser",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Разбирает Linear issue/comment thread в нормализованный machine-readable contract: goal, scope, non-goals, acceptance criteria, verification path, repo, affected repos, risk, dependencies, open questions и, при необходимости, integration-specific fields.",
+      "why": "Даёт всем агентам одинаковую исходную модель задачи и резко снижает дрейф смысла между triage/spec/build/review.",
+      "download": null,
+      "build_spec": "Входы: issue body, labels, status, project, comments, links. Выход: JSON contract + confidence + missing_fields. Должен уметь учитывать @ask, timestamps, decisions summary, repo registry и optional integration fields: provider_name, integration_kind, auth_scheme, required_credentials, secret_slots, required_scopes, oauth_redirect_uris, webhook_callback_urls, test_strategy, go_live_checklist, rollback_plan.",
+      "sources": [
+        "Linear issue contract pattern",
+        "OpenAI plan/spec guidance",
+        "IntegrationAgent issue-contract extension"
+      ]
+    },
+    {
+      "id": "F02",
+      "name": "Context Pack Builder",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Собирает компактный контекст-пак из Obsidian, repo guidance, AGENTS.md/CLAUDE.md, linked docs, recent PRs, ADR, PLAN, SPEC, runbooks, project registry и, для integration-задач, sanitized integration artifact references.",
+      "why": "Лучшие агентные пайплайны побеждают не моделью, а качеством контекста.",
+      "download": null,
+      "build_spec": "Должен уметь дедуплицировать контекст, выделять authoritative sources, собирать last relevant comments, decisions summary и отдельно формировать slim prompt context vs full raw log. Для integration-задач включать только sanitized integration artifact refs; не включать raw secrets, raw token state или raw vendor docs dumps.",
+      "sources": [
+        "Context-pack best practices",
+        "IntegrationAgent context-pack rule"
+      ]
+    },
+    {
+      "id": "F03",
+      "name": "Repo Guidance Interpreter",
+      "category": "foundation",
+      "availability": "template",
+      "description": "Понимает и применяет AGENTS.md, CLAUDE.md, path-specific instructions, prompt files, repo-local conventions, build/test commands, code style и release rules.",
+      "why": "Агенты работают лучше, когда инструкции лежат рядом с кодом, а не только в голове команды.",
+      "download": {
+        "title": "OpenAI AGENTS.md guide",
+        "url": "https://developers.openai.com/codex/guides/agents-md/"
+      },
+      "build_spec": "Нужно поддержать layered instructions: global -> org -> repo -> path-specific -> task-specific. Проверять конфликтующие правила и выдавать effective instructions.",
+      "sources": [
+        "OpenAI AGENTS.md",
+        "Anthropic CLAUDE.md",
+        "GitHub custom instructions"
+      ]
+    },
+    {
+      "id": "F04",
+      "name": "Git Hygiene & Branch Safety",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Следит за чистым git status, scoped diffs, feature branches, worktree/branch naming, small commits, revertability и связкой issue↔branch↔PR.",
+      "why": "Нужен всем агентам, которые пишут код или готовят PR.",
+      "download": null,
+      "build_spec": "Правила: не работать на dirty tree без явного разрешения, не расширять scope diff, коммитить малыми инкрементами, линковать issue/PR, уважать branch protection.",
+      "sources": [
+        "Codex llms-full",
+        "GitHub protected branches"
+      ]
+    },
+    {
+      "id": "F05",
+      "name": "Verification Path Executor",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Понимает verification_path из контракта и умеет запускать нужные тесты, линтеры, smoke steps, coverage, security scans и ручные checklists.",
+      "why": "Отделяет «код написан» от «работа доказана».",
+      "download": null,
+      "build_spec": "Поддержка приоритетов: fastest relevant tests first -> full targeted suite -> smoke. Должен логировать exact commands, outputs, artifacts and failures.",
+      "sources": [
+        "OpenAI Plan.md/Implement.md guidance",
+        "GitHub/Copilot code standards"
+      ]
+    },
+    {
+      "id": "F06",
+      "name": "Structured Summary Writer",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Пишет короткие, high-signal сводки для Linear comments, PR descriptions, release notes, postmortems и status updates.",
+      "why": "Агентная система умирает, если люди не понимают, что именно уже сделано и что осталось.",
+      "download": null,
+      "build_spec": "Форматы: work summary, blocker summary, question summary, PR summary, release summary, monitoring summary. Всегда указывать facts / unknowns / asks / links.",
+      "sources": [
+        "Linear interaction best practices",
+        "OpenAI docs phase"
+      ]
+    },
+    {
+      "id": "F07",
+      "name": "Risk Escalation & Human Gate",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Умеет останавливать автономный ход и переводить задачу в human decision при security, payments, auth, migrations, destructive ops, ambiguous scope или low confidence.",
+      "why": "Лучшие команды делают людей быстрее, а не выключают их.",
+      "download": null,
+      "build_spec": "Возвращает reason_code, confidence, recommended next step, impact area, rollback note. Триггеры должны быть прозрачными и аудируемыми.",
+      "sources": [
+        "user docs human gate",
+        "GitHub Copilot required human review",
+        "SRE change risk"
+      ]
+    },
+    {
+      "id": "F08",
+      "name": "Secrets, Permissions & Safe Command Guard",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Контролирует, какие команды, токены, environments, MCP tools и file paths доступны агенту; запрещает опасные действия вне policy.",
+      "why": "Без этого автономия быстро превращается в безопасность на честном слове.",
+      "download": null,
+      "build_spec": "Нужна allowlist/denylist модель по агентам и режимам (read-only, write, deploy, incident). Логировать каждую escalation и доступ к секретам. Для integration work различать docs_allowlist, sandbox_api_allowlist и release_broker_only; запрещать прямую работу с raw secrets вне broker boundary.",
+      "sources": [
+        "Claude subagent tool restrictions",
+        "GitHub secure use",
+        "Integration runner/network policy"
+      ]
+    },
+    {
+      "id": "F09",
+      "name": "Decision Log & Memory Skill",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Поддерживает compact decision log: какие решения приняты, когда, кем, на основании чего; умеет резюмировать длинные comment threads.",
+      "why": "Снижает повторные вопросы и позволяет агентам не тащить всю переписку целиком.",
+      "download": null,
+      "build_spec": "Структура записи: timestamp, actor, decision, rationale, evidence, supersedes, unresolved_questions. Должен обновлять summary инкрементально.",
+      "sources": [
+        "user docs on canonical log",
+        "Linear promptContext"
+      ]
+    },
+    {
+      "id": "F10",
+      "name": "Repo/Project Registry Resolver",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Разрешает mapping issue/project/area -> primary_repo / affected_repos / service_dependencies / required_checks / environments.",
+      "why": "У тебя это ключевой слой для multi-repo маршрутизации.",
+      "download": null,
+      "build_spec": "Опирается на Repository Registry. Умеет давать confidence и объяснение маршрутизации. Поддерживает repo_kind, environments, team_id, project_id.",
+      "sources": [
+        "user docs repo registry"
+      ]
+    },
+    {
+      "id": "F11",
+      "name": "Telemetry & Artifact Linker",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Связывает issue, workflow run, branch, PR, checks, deployment, dashboards, logs и agent session external URLs.",
+      "why": "Без сквозной связки человек теряет наблюдаемость над системой.",
+      "download": null,
+      "build_spec": "Должен уметь публиковать canonical URLs обратно в Linear comment/activity и собирать correlation ids.",
+      "sources": [
+        "Linear agent session externalUrls",
+        "user docs state sync"
+      ]
+    },
+    {
+      "id": "F12",
+      "name": "Evaluation & Benchmark Harness",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Запускает eval-наборы для агентов/скиллов, собирает quality metrics, variance, false-positive/false-negative patterns и regression alerts.",
+      "why": "Без evals агентная команда деградирует незаметно.",
+      "download": {
+        "title": "Anthropic skill-creator",
+        "url": "https://github.com/anthropics/claude-plugins-official/blob/main/plugins/skill-creator/skills/skill-creator/SKILL.md"
+      },
+      "build_spec": "Нужно хранить gold tasks и gold PRs, поддерживать before/after benchmark по skill versions и правила автоотката неудачных изменений.",
+      "sources": [
+        "skill-creator",
+        "OpenAI/GitHub evaluation recommendations"
+      ]
+    },
+    {
+      "id": "F13",
+      "name": "Sensitive Auth Data Boundary Guard",
+      "category": "foundation",
+      "availability": "custom",
+      "description": "Следит, чтобы raw secret values, authorization codes, access/refresh tokens и raw token state никогда не попадали в Linear comments, Obsidian notes, repo docs, artifact_registry, context packs или prompt bundles; пропускает только sanitized metadata, aliases, handles и artifact references.",
+      "why": "Это отдельный boundary-control слой: внешняя интеграция не должна превращать planning/orchestration/docs в хранилище credentials.",
+      "download": null,
+      "build_spec": "Нужен classifier чувствительных полей + redaction/deny-write pipeline по местам записи. Входы: comments, callback payloads, artifacts, docs, db writes. Выходы: sanitized payload, denied_write event, safe summary, audit trail. Должен различать 'можно хранить metadata' vs 'нельзя хранить raw auth truth'.",
+      "sources": [
+        "RFC 9700 — https://datatracker.ietf.org/doc/rfc9700/",
+        "OWASP Secrets Management Cheat Sheet — https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+        "GitHub validating webhook deliveries — https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries"
+      ]
+    },
+    {
+      "id": "R01",
+      "name": "Spec Kit / Spec-Driven Development Toolkit",
+      "category": "reusable",
+      "availability": "downloadable",
+      "description": "Открытый toolkit для spec-driven development: помогает вести работу от спецификации к реализации.",
+      "why": "Лучше всего подходит как база для SpecAgent, ArchitectAgent и PlanAgent.",
+      "download": {
+        "title": "github/spec-kit",
+        "url": "https://github.com/github/spec-kit"
+      },
+      "build_spec": null,
+      "sources": [
+        "GitHub Spec Kit"
+      ]
+    },
+    {
+      "id": "R02",
+      "name": "Anthropic skill-creator",
+      "category": "reusable",
+      "availability": "downloadable",
+      "description": "Официальный скилл для создания, улучшения и оценки других скиллов.",
+      "why": "Нужен для EvalsAgent и для быстрой итерации вашей внутренней skill-библиотеки.",
+      "download": {
+        "title": "skill-creator",
+        "url": "https://github.com/anthropics/claude-plugins-official/blob/main/plugins/skill-creator/skills/skill-creator/SKILL.md"
+      },
+      "build_spec": null,
+      "sources": [
+        "Anthropic official skill"
+      ]
+    },
+    {
+      "id": "R03",
+      "name": "Anthropic webapp-testing",
+      "category": "reusable",
+      "availability": "downloadable",
+      "description": "Официальный пример скилла для тестирования веб-приложений.",
+      "why": "Нужен как база для E2E/TestAgent и smoke/monitoring-проверок UI.",
+      "download": {
+        "title": "webapp-testing",
+        "url": "https://github.com/anthropics/skills/tree/main/skills/webapp-testing"
+      },
+      "build_spec": null,
+      "sources": [
+        "Anthropic skills repo"
+      ]
+    },
+    {
+      "id": "R04",
+      "name": "Anthropic mcp-builder",
+      "category": "reusable",
+      "availability": "downloadable",
+      "description": "Официальный пример скилла для построения MCP-серверов.",
+      "why": "Полезен ProvisionerAgent и PlatformAgent для расширения tool surface.",
+      "download": {
+        "title": "mcp-builder",
+        "url": "https://github.com/anthropics/skills/tree/main/skills/mcp-builder"
+      },
+      "build_spec": null,
+      "sources": [
+        "Anthropic skills repo"
+      ]
+    },
+    {
+      "id": "R05",
+      "name": "Anthropic frontend-design",
+      "category": "reusable",
+      "availability": "downloadable",
+      "description": "Официальный пример скилла для фронтенд/дизайн-задач.",
+      "why": "Можно адаптировать для FrontendBuildAgent и UX-support workflow.",
+      "download": {
+        "title": "frontend-design",
+        "url": "https://github.com/anthropics/skills/tree/main/skills/frontend-design"
+      },
+      "build_spec": null,
+      "sources": [
+        "Anthropic skills repo"
+      ]
+    },
+    {
+      "id": "R06",
+      "name": "Anthropic claude-api",
+      "category": "reusable",
+      "availability": "downloadable",
+      "description": "Официальный пример скилла для работы с Claude API на разных языках.",
+      "why": "Ускоряет интеграционные/SDK-задачи и обучение BuildAgent API best practices.",
+      "download": {
+        "title": "claude-api",
+        "url": "https://github.com/anthropics/skills/tree/main/skills/claude-api"
+      },
+      "build_spec": null,
+      "sources": [
+        "Anthropic skills repo"
+      ]
+    },
+    {
+      "id": "R07",
+      "name": "Anthropic doc-coauthoring",
+      "category": "reusable",
+      "availability": "downloadable",
+      "description": "Официальный пример скилла для совместного написания документов.",
+      "why": "Хорошая база для DocsAgent, SpecAgent, ADR/PLAN generation.",
+      "download": {
+        "title": "doc-coauthoring",
+        "url": "https://github.com/anthropics/skills/tree/main/skills/doc-coauthoring"
+      },
+      "build_spec": null,
+      "sources": [
+        "Anthropic skills repo"
+      ]
+    },
+    {
+      "id": "R08",
+      "name": "GitHub Copilot Customization Library",
+      "category": "reusable",
+      "availability": "downloadable",
+      "description": "Официальная библиотека custom instructions, prompt files и custom agents для Copilot.",
+      "why": "Готовая база для path-specific instructions, reviewer prompts и language-specific guidance.",
+      "download": {
+        "title": "Customization library",
+        "url": "https://docs.github.com/en/copilot/tutorials/customization-library"
+      },
+      "build_spec": null,
+      "sources": [
+        "GitHub official"
+      ]
+    },
+    {
+      "id": "R09",
+      "name": "Awesome GitHub Copilot",
+      "category": "reusable",
+      "availability": "downloadable",
+      "description": "Большая community-коллекция custom agents, instructions, skills, hooks, workflows и plugins для Copilot.",
+      "why": "Полезна как каталог реальных паттернов и стартовых шаблонов, но требует ревью перед продом.",
+      "download": {
+        "title": "github/awesome-copilot",
+        "url": "https://github.com/github/awesome-copilot"
+      },
+      "build_spec": null,
+      "sources": [
+        "GitHub community collection"
+      ]
+    },
+    {
+      "id": "R10",
+      "name": "OpenAI AGENTS.md Example",
+      "category": "reusable",
+      "availability": "downloadable",
+      "description": "Реальный AGENTS.md из openai/codex, хороший reference для repo guidance.",
+      "why": "Нужен как эталон структуры и степени конкретности для repo-local agent instructions.",
+      "download": {
+        "title": "openai/codex AGENTS.md",
+        "url": "https://github.com/openai/codex/blob/main/AGENTS.md"
+      },
+      "build_spec": null,
+      "sources": [
+        "OpenAI repo"
+      ]
+    },
+    {
+      "id": "S01",
+      "name": "Triage Classifier",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Классифицирует issue по type/risk/source/mode/area и определяет, нужен ли spec, input или можно идти дальше.",
+      "why": "Основа IntakeAgent.",
+      "download": null,
+      "build_spec": "Модель multilabel classification + confidence + rationale + required next status.",
+      "sources": [
+        "user workflow docs"
+      ]
+    },
+    {
+      "id": "S02",
+      "name": "Duplicate & Similar Issue Detector",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Ищет дубликаты, близкие прошлые задачи, связанные PR/incident/postmortem.",
+      "why": "Снимает шум в Triage.",
+      "download": null,
+      "build_spec": "Использовать semantic search по issue corpus, PR titles, incidents, docs.",
+      "sources": [
+        "best practice backlog hygiene"
+      ]
+    },
+    {
+      "id": "S03",
+      "name": "Clarifying Questions Composer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Формирует один структурированный запрос к человеку вместо расплывчатого «нужны уточнения».",
+      "why": "Ключевой skill для Needs Input.",
+      "download": null,
+      "build_spec": "Формат: what_missing, why_needed, options, preferred_answer_shape, blocking_vs_optional.",
+      "sources": [
+        "user @ask mechanics"
+      ]
+    },
+    {
+      "id": "S04",
+      "name": "Docs & ADR Retriever",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Находит релевантные ADR/spec/runbook/obsidian notes/README по задаче и компоненту.",
+      "why": "Нужен ContextAgent, ArchitectAgent, ReviewAgent.",
+      "download": null,
+      "build_spec": "Ранжировать по recency, authority, repo/area match, decision relevance.",
+      "sources": [
+        "user docs",
+        "Linear prompt context"
+      ]
+    },
+    {
+      "id": "S05",
+      "name": "Comment Thread Distiller",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Сжимает длинные треды в canonical decisions summary + unresolved questions.",
+      "why": "Сильно экономит контекст и снижает потерю решений.",
+      "download": null,
+      "build_spec": "Хранить timeline, speaker, action, open question, superseded notes.",
+      "sources": [
+        "user docs canonical conversation log"
+      ]
+    },
+    {
+      "id": "S06",
+      "name": "Issue Contract Generator",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Генерирует строгий issue contract / frontmatter из brief или комментариев.",
+      "why": "База SpecAgent.",
+      "download": null,
+      "build_spec": "Поля: goal, background, scope, non_goals, acceptance_criteria, verification_path, docs_links, primary_repo, affected_repos, dependencies, risk, done_when, open_questions.",
+      "sources": [
+        "user contract doc"
+      ]
+    },
+    {
+      "id": "S07",
+      "name": "Acceptance Criteria Engineer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Преобразует vague request в тестируемые acceptance criteria и done_when.",
+      "why": "Без этого build/test дрейфуют.",
+      "download": null,
+      "build_spec": "Разделять user-visible AC и engineering done_when. Выдавать measurable checks.",
+      "sources": [
+        "OpenAI long-horizon tasks"
+      ]
+    },
+    {
+      "id": "S08",
+      "name": "Verification Path Designer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Строит конкретный technical proof path: commands, checks, smoke, manual steps, expected outputs.",
+      "why": "Связывает spec и test.",
+      "download": null,
+      "build_spec": "Учитывать repo commands, environment constraints, fastest signal path.",
+      "sources": [
+        "user contract doc"
+      ]
+    },
+    {
+      "id": "S09",
+      "name": "ADR Writer & Option Matrix",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Пишет ADR с options, trade-offs, risks, migration impact, rollback story.",
+      "why": "Нужен ArchitectAgent.",
+      "download": null,
+      "build_spec": "Всегда включать context, decision, alternatives, consequences, open risks.",
+      "sources": [
+        "architecture best practice"
+      ]
+    },
+    {
+      "id": "S10",
+      "name": "Cross-Repo Impact Analyzer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Оценивает, какие сервисы/репозитории/consumers затронет изменение.",
+      "why": "Нужен для multi-repo изменений и release planning.",
+      "download": null,
+      "build_spec": "Строить affected_repos/services/owners/checks/deployments map.",
+      "sources": [
+        "user repo registry"
+      ]
+    },
+    {
+      "id": "S11",
+      "name": "Migration & Data Change Planner",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Планирует schema/data migrations, backward compatibility, rollout gates, rollback windows.",
+      "why": "Критично для high-risk work.",
+      "download": null,
+      "build_spec": "Разделять expand/migrate/contract шаги, backfill, verification, rollback safety.",
+      "sources": [
+        "SRE / change management"
+      ]
+    },
+    {
+      "id": "S12",
+      "name": "Work Breakdown & Sub-Issue Generator",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Делит работу на milestones и sub-issues по repo/component/owner.",
+      "why": "Ядро PlanAgent.",
+      "download": null,
+      "build_spec": "Правила atomicity, dependency graph, parallelizable chunks, repo ownership.",
+      "sources": [
+        "user plan docs"
+      ]
+    },
+    {
+      "id": "S13",
+      "name": "Dependency & Sequence Planner",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Строит dependency graph и рекомендует последовательность выполнения.",
+      "why": "Снижает блокировки и rework.",
+      "download": null,
+      "build_spec": "Явно различать hard/soft dependencies, external blockers, long poles.",
+      "sources": [
+        "project planning best practices"
+      ]
+    },
+    {
+      "id": "S14",
+      "name": "Backend Implementation Pack",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Глубокие правила backend-кодинга: API contracts, services, validation, logging, idempotency, error handling, telemetry, feature flags.",
+      "why": "Основной domain skill для BackendBuildAgent.",
+      "download": null,
+      "build_spec": "Нужно адаптировать под стек каждого repo: language, framework, lint/test/build, package manager, persistence layer.",
+      "sources": [
+        "repo-specific best practices"
+      ]
+    },
+    {
+      "id": "S15",
+      "name": "Frontend Implementation Pack",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Правила UI-компонентов, accessibility, state management, routing, forms, loading/error states, design system adherence, analytics hooks.",
+      "why": "Для FrontendBuildAgent.",
+      "download": null,
+      "build_spec": "Включить responsive, a11y, skeleton/error/empty states, component tests, visual consistency.",
+      "sources": [
+        "frontend best practices"
+      ]
+    },
+    {
+      "id": "S16",
+      "name": "Integration/API Builder Pack",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Работа с third-party APIs, retries, rate limits, idempotency keys, webhook handling, auth, schema drift и безопасным потреблением secret aliases/handles вместо raw credentials.",
+      "why": "Для BuildAgent-Integrations под контролем IntegrationAgent.",
+      "download": null,
+      "build_spec": "Должен генерировать resilient integration code and test doubles. Обязан уважать integration_brief и auth_decision_record, потреблять только sanitized auth artifacts/aliases, строить retry/backoff/idempotency, логирование, DLQ/replay hooks и failure classification.",
+      "sources": [
+        "integration engineering best practices",
+        "IntegrationAgent execution boundary"
+      ]
+    },
+    {
+      "id": "S17",
+      "name": "Infra & IaC Builder Pack",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Terraform/Pulumi/Kubernetes/GitHub Actions patterns: least privilege, modules, plan/apply discipline, secrets hygiene, rollback notes.",
+      "why": "Для InfraBuildAgent.",
+      "download": null,
+      "build_spec": "Нужна интеграция с environment policies и protected deploys.",
+      "sources": [
+        "GitHub secure use",
+        "platform engineering best practice"
+      ]
+    },
+    {
+      "id": "S18",
+      "name": "Data/SQL & Migration Builder Pack",
+      "category": "custom",
+      "availability": "custom",
+      "description": "SQL, indexes, transactions, data integrity, migration safety, backfills, sampling, reconciliation.",
+      "why": "Для DataMigrationBuildAgent.",
+      "download": null,
+      "build_spec": "Должен уметь generate/explain query plans and safe rollout path.",
+      "sources": [
+        "database change best practices"
+      ]
+    },
+    {
+      "id": "S19",
+      "name": "Test Strategy Generator",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Выбирает нужный баланс unit/integration/e2e/contract tests и negative cases.",
+      "why": "Помогает TestAgent не писать лишнее и не упускать важное.",
+      "download": null,
+      "build_spec": "Вход: risk, component type, blast radius, affected layers. Выход: test plan + priorities.",
+      "sources": [
+        "quality engineering best practice"
+      ]
+    },
+    {
+      "id": "S20",
+      "name": "Failing-Test-First Harness",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Побуждает сначала получить fail, потом implementation, потом green.",
+      "why": "Поддерживает TDD-ish цикл, который DORA прямо усиливает в эпоху AI.",
+      "download": null,
+      "build_spec": "Уметь формировать sentinel test и stop-and-fix rule.",
+      "sources": [
+        "DORA TDD and AI"
+      ]
+    },
+    {
+      "id": "S21",
+      "name": "Coverage & Gap Analyzer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Оценивает, чего в test suite всё ещё не хватает: edge cases, unhappy paths, race conditions, auth cases, migrations.",
+      "why": "Нужен TestAgent и ReviewAgent.",
+      "download": null,
+      "build_spec": "Использовать diff-aware analysis + existing coverage tools.",
+      "sources": [
+        "quality best practice"
+      ]
+    },
+    {
+      "id": "S22",
+      "name": "Semantic PR Reviewer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Проверяет diff семантически: requirements match, hidden regressions, race conditions, broken invariants, consistency, maintainability.",
+      "why": "Ключевой skill ReviewAgent.",
+      "download": null,
+      "build_spec": "Нужен high-signal output: issue, severity, evidence, suggested fix, risk of false positive.",
+      "sources": [
+        "OpenAI review guidance"
+      ]
+    },
+    {
+      "id": "S23",
+      "name": "Performance & Scalability Reviewer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Ищет N+1, hot paths, bad queries, unnecessary rerenders, cache misses, concurrency bottlenecks.",
+      "why": "Часто пропускается обычным code review.",
+      "download": null,
+      "build_spec": "Diff-aware + architecture-aware + telemetry-aware analysis.",
+      "sources": [
+        "review best practice"
+      ]
+    },
+    {
+      "id": "S24",
+      "name": "Secure Coding Reviewer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Проверяет authn/authz, validation, XSS/SSRF/CSRF, secrets, crypto misuse, logging of sensitive data, tenant isolation.",
+      "why": "Для SecurityAgent и ReviewAgent.",
+      "download": null,
+      "build_spec": "Опирается на OWASP ASVS/SCP, repo threat model, data classification.",
+      "sources": [
+        "OWASP ASVS",
+        "OWASP Secure Coding",
+        "GitLab security engineer"
+      ]
+    },
+    {
+      "id": "S25",
+      "name": "Threat Modeling Assistant",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Строит lightweight threat model для risky features и infra changes.",
+      "why": "Нужен до кода, а не только после.",
+      "download": null,
+      "build_spec": "Формат: assets, trust boundaries, entry points, abuse cases, mitigations, residual risk.",
+      "sources": [
+        "OWASP Secure by Design",
+        "NIST SSDF"
+      ]
+    },
+    {
+      "id": "S26",
+      "name": "Supply Chain & Dependency Risk Analyzer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Оценивает обновления зависимостей, CVEs, transitive risk, semver breakage, changelog impact.",
+      "why": "Основа DependencyAgent и SecurityAgent.",
+      "download": null,
+      "build_spec": "Поддержка lockfiles, advisories, breaking changes, rollout recommendation.",
+      "sources": [
+        "OpenSSF OSPS",
+        "GitLab security"
+      ]
+    },
+    {
+      "id": "S27",
+      "name": "Docs Synchronizer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Обновляет README, runbooks, ADR index, module docs, PR summary, diagrams и release notes при изменении кода.",
+      "why": "OpenAI рекомендует встраивать docs прямо в delivery pipeline.",
+      "download": null,
+      "build_spec": "Detect stale docs from diff; propose exact files to update; generate mermaid when useful. Для integration work обновлять webhook contracts, runbooks, go-live checklists и rollout notes без утечки raw-secret/auth truth.",
+      "sources": [
+        "OpenAI docs phase",
+        "raw-secret prohibition"
+      ]
+    },
+    {
+      "id": "S28",
+      "name": "Changelog & Release Notes Generator",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Генерирует change summaries из commits/PRs/issues по аудиториям: engineers, stakeholders, customers.",
+      "why": "Нужен ReleaseAgent и DocsAgent.",
+      "download": null,
+      "build_spec": "Разделять internal-only vs customer-facing, breaking changes, migration notes.",
+      "sources": [
+        "release engineering best practice"
+      ]
+    },
+    {
+      "id": "S29",
+      "name": "Merge Gate Checklist",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Проверяет approvals, required checks, CODEOWNERS, deployment constraints, feature flag status, rollback note.",
+      "why": "Нужен перед merge/deploy.",
+      "download": null,
+      "build_spec": "Ясный yes/no gate with missing_items.",
+      "sources": [
+        "GitHub branch protection",
+        "CODEOWNERS",
+        "environments"
+      ]
+    },
+    {
+      "id": "S30",
+      "name": "Smoke Test Orchestrator",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Запускает post-merge/post-deploy smoke path для ключевых сценариев.",
+      "why": "Связывает release и monitoring.",
+      "download": null,
+      "build_spec": "Поддержка API/UI/checklist-based smoke, prod-safe only.",
+      "sources": [
+        "release/monitoring best practice"
+      ]
+    },
+    {
+      "id": "S31",
+      "name": "Rollback & Mitigation Advisor",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Выбирает безопасный rollback/mitigation path при неудачном деплое или инциденте.",
+      "why": "Нужен ReleaseAgent и MonitoringAgent.",
+      "download": null,
+      "build_spec": "Варианты: rollback, feature flag off, env disable, traffic shift, revert commit, hotfix.",
+      "sources": [
+        "SRE incident/change management"
+      ]
+    },
+    {
+      "id": "S32",
+      "name": "SLO/SLI & Error Budget Interpreter",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Понимает сервисные SLO/SLI, error budget policy и решает, когда нужно заморозить изменения или эскалировать reliability work.",
+      "why": "Это зрелый operating skill, без которого monitoring формален.",
+      "download": null,
+      "build_spec": "Вход: SLI data, incidents, release cadence. Выход: status, budget health, allowed changes, escalation recommendation.",
+      "sources": [
+        "Google SRE error budget"
+      ]
+    },
+    {
+      "id": "S33",
+      "name": "Logs/Traces/Metrics Triage",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Переходит от alert/trace/log anomaly к suspect component, suspect change, repro hints и next actions.",
+      "why": "Основа MonitoringAgent.",
+      "download": null,
+      "build_spec": "Нужна корреляция telemetry↔deploy↔commit↔issue. Поддержать OTel semantics.",
+      "sources": [
+        "OpenTelemetry",
+        "OpenAI deploy & maintain"
+      ]
+    },
+    {
+      "id": "S34",
+      "name": "Canary & Post-Deploy Analyzer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Сравнивает pre/post deploy health, canary vs baseline, performance/error/latency shifts.",
+      "why": "Позволяет не закрывать issue сразу после deploy.",
+      "download": null,
+      "build_spec": "Поддержка threshold + anomaly + human escalation.",
+      "sources": [
+        "monitoring best practice"
+      ]
+    },
+    {
+      "id": "S35",
+      "name": "Incident Timeline & Postmortem Drafter",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Собирает timeline, impact, root-cause hypotheses, contributing factors, follow-up actions.",
+      "why": "Нужен MonitoringAgent и EvalsAgent.",
+      "download": null,
+      "build_spec": "Без blame, с action items и link to preventing controls.",
+      "sources": [
+        "Google SRE incident management"
+      ]
+    },
+    {
+      "id": "S36",
+      "name": "Repo Provisioning Scaffold",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Создаёт новый repo/project scaffold: CI, CODEOWNERS, branch protections, AGENTS.md/CLAUDE.md, issue templates, env skeleton.",
+      "why": "Основа ProvisionerAgent.",
+      "download": null,
+      "build_spec": "Опирается на repo_kind, template_repo, checks, environments, docs root note.",
+      "sources": [
+        "user provisioner concept"
+      ]
+    },
+    {
+      "id": "S37",
+      "name": "CI/CD Workflow Bootstrap",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Поднимает build/test/review/deploy pipelines и required checks по golden path.",
+      "why": "Для Platform/Provisioner.",
+      "download": null,
+      "build_spec": "Нужно на уровне template repo + validations + secrets policy.",
+      "sources": [
+        "GitHub Actions docs"
+      ]
+    },
+    {
+      "id": "S38",
+      "name": "Repository Registry Sync",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Синхронизирует backend registry ↔ Linear projects/labels/links ↔ repo metadata.",
+      "why": "Критично для маршрутизации и источника истины.",
+      "download": null,
+      "build_spec": "Bi-directional but registry is canonical. Detect drift and propose fixes.",
+      "sources": [
+        "user repo registry"
+      ]
+    },
+    {
+      "id": "S39",
+      "name": "Dependency Update Executor",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Автоматизирует safe dependency refresh с changelog summarization, targeted tests, rollout note и rollback plan.",
+      "why": "Для DependencyAgent.",
+      "download": null,
+      "build_spec": "Batching policy, critical CVE fast lane, low-risk grouped updates.",
+      "sources": [
+        "dependency maintenance best practices"
+      ]
+    },
+    {
+      "id": "S40",
+      "name": "Tech Debt & Stale Code Detector",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Находит feature flags to remove, dead code, stale docs, deprecated APIs, low-value toil automation targets.",
+      "why": "Даёт отделу не только доставку, но и постоянное оздоровление системы.",
+      "download": null,
+      "build_spec": "Регулярные scans + issue creation suggestions ranked by impact.",
+      "sources": [
+        "SRE toil elimination"
+      ]
+    },
+    {
+      "id": "S41",
+      "name": "Agent Quality Evaluator",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Измеряет качество работы агентов по acceptance pass rate, review bug yield, rework rate, false positives, merge success, incident escape rate.",
+      "why": "Для EvalsAgent.",
+      "download": null,
+      "build_spec": "Собирать gold tasks, PR outcome metrics, user feedback and comment reactions.",
+      "sources": [
+        "OpenAI/GitHub metrics guidance"
+      ]
+    },
+    {
+      "id": "S42",
+      "name": "DORA & SPACE Metrics Interpreter",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Считает и интерпретирует delivery + developer experience metrics: deployment frequency, lead time, change failure rate, MTTR, plus SPACE dimensions.",
+      "why": "Нужен для управления отделом, а не только отдельными задачами.",
+      "download": null,
+      "build_spec": "Не сводить всё к одной цифре. Разделять outcome vs activity metrics.",
+      "sources": [
+        "DORA",
+        "SPACE"
+      ]
+    },
+    {
+      "id": "S43",
+      "name": "Stakeholder Status Reporter",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Пишет summaries для founders/PMs/eng leads: что движется, где риск, что заблокировано, что требует решения.",
+      "why": "Основа ReporterAgent.",
+      "download": null,
+      "build_spec": "Audience-aware tone; concise; always include next decision point.",
+      "sources": [
+        "user ReporterAgent concept"
+      ]
+    },
+    {
+      "id": "S44",
+      "name": "@ask Conversation Handler",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Умеет отличать просто комментарий от явного prompt event с @ask и корректно резюмировать накопившуюся переписку перед ответом.",
+      "why": "Ключевой skill для работы внутри Linear comments.",
+      "download": null,
+      "build_spec": "Игнорировать @ask в quotes/code blocks; respect current workflow state; create signal/resume semantics.",
+      "sources": [
+        "user @ask mechanics"
+      ]
+    },
+    {
+      "id": "S45",
+      "name": "Prompt/Instruction Tuner",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Оптимизирует descriptions/frontmatter/instructions для лучшего triggering accuracy и меньшего prompt bloat.",
+      "why": "Нужен, потому что skills и AGENTS.md быстро разрастаются и начинают мешать друг другу.",
+      "download": null,
+      "build_spec": "Проводить trigger analysis, undertrigger/overtrigger, ambiguity fixes, brevity optimization.",
+      "sources": [
+        "Anthropic skill guide",
+        "CLAUDE.md best practices"
+      ]
+    },
+    {
+      "id": "S46",
+      "name": "Integration Type & Auth Scheme Classifier",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Определяет provider_name, integration_kind и auth_scheme: external_api / service_to_service / webhook; api_key / basic / hmac / oauth2_auth_code / oauth2_client_credentials / oauth2_device / webhook_signature / mtls.",
+      "why": "Первая развилка для IntegrationAgent и IntakeAgent: от неё зависит контракт, gating, runner policy и уровень human involvement.",
+      "download": null,
+      "build_spec": "Входы: issue brief, vendor docs, existing adapters, prior decisions. Выходы: classification + confidence + rationale + missing prerequisites + recommended next steps. Должен уметь распознавать ambiguous/mixed auth модели и эскалировать low-confidence cases.",
+      "sources": [
+        "IntegrationAgent supported integration classes",
+        "IntegrationAgent supported auth schemes",
+        "RFC 9700 — https://datatracker.ietf.org/doc/rfc9700/"
+      ]
+    },
+    {
+      "id": "S47",
+      "name": "Integration Brief & Auth Decision Record Generator",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Строит integration_brief и auth_decision_record: provider, endpoints, scopes, redirect URIs, callback URLs, rate limits, error model, test strategy, go-live checklist и rollback plan.",
+      "why": "Это главный артефакт, который разделяет discovery/gating и собственно кодовую реализацию.",
+      "download": null,
+      "build_spec": "Должен выпускать два связанных артефакта: 1) integration_brief для delivery; 2) auth_decision_record с rationale и boundary rules. Включать non-goals, security assumptions, ownership, environments, observability expectations и explicit list of human-gated console actions.",
+      "sources": [
+        "IntegrationAgent generated artifacts",
+        "IntegrationAgent issue-contract extension",
+        "Spec/ADR best practices"
+      ]
+    },
+    {
+      "id": "S48",
+      "name": "Credential Prerequisite Handshake Manager",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Формирует structured Needs Input handoff для secret upload, redirect URI registration, scope approval, OAuth consent completion и webhook registration; никогда не просит raw credential paste.",
+      "why": "Самая частая точка поломки в интеграциях — не код, а плохой handshake между системой и человеком.",
+      "download": null,
+      "build_spec": "Выход должен содержать what_missing, why_needed, exact console action, accepted answer shape, blocking flag, secure upload path и post-response resume rule. Любой unresolved needs:* prerequisite обязан удерживать issue вне Ready for Build.",
+      "sources": [
+        "IntegrationAgent workflow semantics",
+        "Operational rules for Needs Input",
+        "Linear delegated-contributor comment workflow"
+      ]
+    },
+    {
+      "id": "S49",
+      "name": "Secrets/Auth Plane Metadata Steward",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Работает с metadata-only Secrets/Auth plane: credential_slots, oauth_client_registrations, oauth_consent_sessions, token_handles, webhook_registrations, integration_validation_runs.",
+      "why": "Нужен, чтобы orchestration layer видел readiness/auth state, но не становился секрет-хранилищем.",
+      "download": null,
+      "build_spec": "Должен поддерживать create/read/update flow для metadata-only сущностей, lookup secret aliases/handles, revoke/rotation state, client registration facts и validation run history. Raw secret material, auth codes и bearer tokens сохранять запрещено.",
+      "sources": [
+        "IntegrationAgent storage and security invariants",
+        "OWASP Secrets Management Cheat Sheet — https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
+      ]
+    },
+    {
+      "id": "S50",
+      "name": "OAuth Consent & Callback Sanitizer",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Обрабатывает OAuth callback/onboarding flow безопасно: сохраняет только sanitized callback facts, проверяет redirect URI and scope readiness, держит browser-based consent human-in-the-loop.",
+      "why": "OAuth automation ломается и по безопасности, и по UX, если callback, consent и token-exchange boundaries размыты.",
+      "download": null,
+      "build_spec": "Для MVP: фиксировать provider, consent state, timestamp, requester, safe identifiers и next step; не сохранять raw authorization code. Для последующих фаз: подготовить boundary под broker-driven token exchange/refresh/revoke. Поддерживать PKCE-aware and state-aware reasoning.",
+      "sources": [
+        "RFC 9700 — https://datatracker.ietf.org/doc/rfc9700/",
+        "OAuth browser-based apps draft — https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps",
+        "IntegrationAgent OAuth callback capture rule"
+      ]
+    },
+    {
+      "id": "S51",
+      "name": "Webhook Contract & Signature Hardening Pack",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Проектирует и проверяет webhook contracts: callback URL, event filtering, signature verification, replay/idempotency handling, retry/DLQ strategy, timeout behavior, delivery correlation и verification reports.",
+      "why": "Webhook-интеграции чаще всего падают на подписи, повторных доставках и несогласованной модели событий.",
+      "download": null,
+      "build_spec": "Всегда включать secret/signature verification, HTTPS, minimal event subscription, event/action filtering, correlation id, async processing, replay-safe idempotency, delivery diagnostics и smoke checklist. Генерировать webhook_contract и webhook_validation_report.",
+      "sources": [
+        "GitHub validating webhook deliveries — https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries",
+        "GitHub best practices for using webhooks — https://docs.github.com/en/webhooks/using-webhooks/best-practices-for-using-webhooks",
+        "IntegrationAgent generated artifacts"
+      ]
+    },
+    {
+      "id": "S52",
+      "name": "Integration Validation & Sandbox Readiness Orchestrator",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Проверяет sandbox/onboarding readiness, credential validation state, test strategy, smoke path и evidence completeness до coding/release stages.",
+      "why": "Даже хороший integration code бесполезен, если у команды нет рабочего sandbox, scopes, consent или replayable validation path.",
+      "download": null,
+      "build_spec": "Должен выпускать credential_validation_report и integration_smoke_report. В MVP опирается на текущие metadata routes, sanitized artifacts и DB-backed readiness facts; в будущих фазах расширяется до real broker probes и integration lab/replay tooling.",
+      "sources": [
+        "IntegrationAgent readiness contract",
+        "Acceptance line for current pass",
+        "Not yet accepted as complete integration automation"
+      ]
+    },
+    {
+      "id": "S53",
+      "name": "Integration Runner Capability & Network Policy Matcher",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Сопоставляет integration work с runner capability manifests: networkModesSupported, allowedDocDomains, allowedSandboxDomains, supportsBrowserConsent, supportsSecretBroker, supportsOAuthBroker, supportsIntegrationLab.",
+      "why": "Лучше не запускать интеграционную задачу, чем запустить её на раннере, который физически не может безопасно её выполнить.",
+      "download": null,
+      "build_spec": "На входе issue contract + integration classification + runner manifest. На выходе compatible runners, denied reasons, required network mode, missing capability flags и escalation. Любая несоответствующая задача не должна лизиться non-integration runner'ом.",
+      "sources": [
+        "IntegrationAgent runner and network policy",
+        "Execution routing best practices"
+      ]
+    },
+    {
+      "id": "S54",
+      "name": "Integration Go-Live, Observability & Rollback Pack",
+      "category": "custom",
+      "availability": "custom",
+      "description": "Готовит integration_go_live_checklist, observability hooks, smoke path, release notes constraints и rollback/mitigation plan для внешних интеграций.",
+      "why": "У внешних интеграций важны не только код и тесты, но и post-deploy visibility, vendor failure modes и безопасный rollback.",
+      "download": null,
+      "build_spec": "Должен включать dashboards/alerts, webhook delivery health, auth failure signals, rate-limit signals, redaction rules для release notes/incident notes, rollback triggers и customer-impact communication hints.",
+      "sources": [
+        "IntegrationAgent generated artifacts",
+        "Operational rules for release and incident notes",
+        "Observability best practices"
+      ]
+    }
+  ],
+  "architecture_overlays": {
+    "integration_agent_and_secrets_auth_plane": {
+      "purpose": [
+        "Зафиксировать implementation boundary для IntegrationAgent и Secrets/Auth plane.",
+        "Определить, что shipped foundation уже есть, а что остаётся future work.",
+        "Дать acceptance line до любого claim о production-ready external integration automation."
+      ],
+      "visible_linear_actor": false,
+      "canonical_truth_split": {
+        "Linear": "operator visibility, ownership, status, comments, Needs Input handshake",
+        "Temporal_or_workflow_engine": "execution truth and orchestration sequencing",
+        "GitHub": "code, CI/CD, merge/deploy gates",
+        "Obsidian": "architecture, runbooks, policy, long-lived docs",
+        "Secrets/Auth plane": "secret aliases, client registrations, redirect URIs, scopes, consent state, token-handle metadata, webhook signing metadata, rotation/revoke state"
+      },
+      "shipped_foundation": [
+        "Shared contracts and enums for integration kinds, auth schemes, consent/token/webhook state, runner capability manifests",
+        "Postgres schema + migration for metadata-only Secrets/Auth plane tables",
+        "Issue-contract parser support for integration-specific fields",
+        "Control API inspection routes for integration state",
+        "Public OAuth callback capture route that persists only sanitized callback facts",
+        "Context-pack support for sanitized integration artifact references",
+        "Workflow-config updates for integration-specific triggers and reason codes",
+        "Minimal IntegrationOnboardingWorkflow skeleton for future human-gated onboarding orchestration"
+      ],
+      "ownership_boundary": {
+        "packages/shared": [
+          "DTOs",
+          "enums",
+          "capability manifest",
+          "issue-contract extension"
+        ],
+        "packages/db": [
+          "metadata-only auth-plane schema",
+          "read/write helpers",
+          "context artifact lookup"
+        ],
+        "apps/control-api": [
+          "internal read routes",
+          "public OAuth callback capture"
+        ],
+        "apps/workflow-worker": [
+          "issue-contract normalization",
+          "workflow-config consumption",
+          "onboarding workflow skeleton"
+        ],
+        "Obsidian": [
+          "canonical architecture",
+          "runbooks"
+        ]
+      },
+      "acceptance_line": [
+        "corepack pnpm typecheck passes",
+        "corepack pnpm test passes",
+        "corepack pnpm test:integration passes in current environment or skips only DB-dependent cases when DATABASE_URL is absent",
+        "New metadata tables are present in migrations and exported through the DB package",
+        "/internal/issues/:issueId/integrations/* routes are available and authenticated",
+        "/oauth/callback/:providerName exists and does not persist raw authorization codes",
+        "Context packs can expose sanitized integration artifact references without exposing auth truth"
+      ],
+      "not_yet_complete": [
+        "live secret broker service or equivalent backend integration",
+        "OAuth token exchange/refresh/revoke execution behind the broker boundary",
+        "real integration-lab sandbox probes and replay tooling",
+        "strict routing so only integration-capable runners can lease integration work",
+        "e2e success path for API-key, OAuth2 Authorization Code + PKCE, and signed webhook onboarding"
+      ],
+      "operational_rules": [
+        "Any needs:* integration prerequisite must hold the issue out of Ready for Build",
+        "Needs Input messages must request upload/consent/console action, not raw credential paste",
+        "Production credential use remains a human-approved gate",
+        "Release notes and incident notes must preserve the raw-secret prohibition"
+      ],
+      "supported_integration_classes": [
+        "external_api",
+        "service_to_service",
+        "webhook"
+      ],
+      "supported_auth_schemes": [
+        "api_key",
+        "basic",
+        "hmac",
+        "oauth2_auth_code",
+        "oauth2_client_credentials",
+        "oauth2_device",
+        "webhook_signature",
+        "mtls"
+      ],
+      "issue_contract_extension_fields": [
+        "provider_name",
+        "integration_kind",
+        "auth_scheme",
+        "required_credentials",
+        "secret_slots",
+        "required_scopes",
+        "oauth_redirect_uris",
+        "sandbox_account_required",
+        "webhook_required",
+        "webhook_callback_urls",
+        "rate_limit_notes",
+        "error_model",
+        "test_strategy",
+        "go_live_checklist",
+        "rollback_plan"
+      ],
+      "generated_artifacts": [
+        "integration_brief",
+        "auth_decision_record",
+        "credential_request",
+        "credential_validation_report",
+        "oauth_consent_session",
+        "webhook_contract",
+        "webhook_validation_report",
+        "integration_smoke_report",
+        "integration_go_live_checklist"
+      ],
+      "workflow_semantics": {
+        "introduces_new_top_level_status": false,
+        "needs_input_for": [
+          "secret upload",
+          "redirect URI registration",
+          "scope approval",
+          "OAuth consent completion",
+          "webhook registration"
+        ],
+        "blocked_for": [
+          "sandbox outage",
+          "invalid scopes",
+          "webhook verification failure",
+          "token expiry/revoke without recovery",
+          "vendor or broker outage"
+        ],
+        "ready_for_build_forbidden_while_unresolved_credentials": true
+      },
+      "runner_network_policy": {
+        "capability_manifest_fields": [
+          "networkModesSupported",
+          "allowedDocDomains",
+          "allowedSandboxDomains",
+          "supportsBrowserConsent",
+          "supportsSecretBroker",
+          "supportsOAuthBroker",
+          "supportsIntegrationLab"
+        ],
+        "allowed_network_modes": [
+          "docs_allowlist",
+          "sandbox_api_allowlist",
+          "release_broker_only"
+        ],
+        "browser_based_consent": "human_in_the_loop"
+      },
+      "context_pack_rules": [
+        "Context packs may include sanitized integration artifact references from artifact_registry",
+        "Context packs must not include raw vendor docs dumps, raw secrets, or raw token state",
+        "Integration artifacts augment the existing context pack; they do not replace knowledge-service truth"
+      ],
+      "mvp_boundary": [
+        "contracts",
+        "metadata schema",
+        "routes",
+        "readiness rules"
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+pack_id: release_delivery_core
+version: v1
+purpose: Ведёт merge/deploy/smoke/rollback orchestration и release communication.
+skill_refs:
+- F05
+- F06
+- F07
+- F11
+- F13
+- S28
+- S29
+- S30
+- S31
+- S54
+optional_skill_refs: []
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - ready_to_merge
+  - deploying
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - final_review_merge
+  - protected_deploy
+  notes: Protected branches and deploy environments require explicit human approval.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A15
+- config/workflow/runtime_role_contracts.yaml#release_agent

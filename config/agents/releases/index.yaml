@@ -1,0 +1,18 @@
+library_id: canonical-agent-library
+release_id_pattern: ^v[1-9][0-9]*$
+releases:
+  - release_id: v1
+    library_version: v1
+    release_manifest_path: v1/release.yaml
+    published_at: 2026-03-28T09:53:54.066Z
+    library_fingerprint: 8ea0164fc7d6f6684f27a3a1e01095c0ca2a4ffc573501d9592475d7c93ea24b
+  - release_id: v2
+    library_version: v2
+    release_manifest_path: v2/release.yaml
+    published_at: 2026-03-31T21:25:47.195Z
+    library_fingerprint: 4553ad27dede36fe705ef24b78747c80edab7985a71dee849566bc61b3f13d74
+  - release_id: v3
+    library_version: v3
+    release_manifest_path: v3/release.yaml
+    published_at: 2026-04-03T22:00:15.505Z
+    library_fingerprint: c4317935427327256788a8815d597bd173e87ffc59b26e0f4470836392c9ffe3

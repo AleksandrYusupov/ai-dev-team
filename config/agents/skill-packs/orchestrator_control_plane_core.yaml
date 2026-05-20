@@ -1,0 +1,54 @@
+pack_id: orchestrator_control_plane_core
+version: v1
+purpose: Управляет state machine issue, запускает/останавливает специализированных агентов, следит за
+  human gates, publishes high-signal status back to Linear.
+skill_refs:
+- F01
+- F02
+- F03
+- F06
+- F07
+- F08
+- F09
+- F10
+- F11
+- F13
+- S01
+- S03
+- S43
+- S44
+- S48
+- S52
+- S53
+optional_skill_refs: []
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - planned
+  - ready_for_build
+  - coding
+  - agent_review
+  - blocked
+  - needs_input
+  - needs_human_decision
+  - rework
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - product_intent
+  - architecture_sign_off
+  - final_review_merge
+  - protected_deploy
+  - credential_ownership_vendor_console_actions
+  notes: Enforces canonical human-owned zones and pause/resume gates.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A00
+- config/workflow/runtime_role_contracts.yaml#orchestrator

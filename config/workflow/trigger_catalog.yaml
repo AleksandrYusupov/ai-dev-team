@@ -1,0 +1,174 @@
+- code: user_create_issue
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: A new issue was created and persisted to the intake inbox.
+- code: system_intake_complete
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Intake validation and normalization completed.
+- code: system_contract_built
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: The issue contract is complete and valid.
+- code: system_rework_routed
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: A rework issue was classified and routed to the next lane.
+- code: system_input_required
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: The workflow requires new human input before it can continue.
+- code: credential_required
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Integration onboarding identified missing credential prerequisites.
+- code: credential_validated
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Credential slot validation passed for the current integration step.
+- code: oauth_consent_completed
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: OAuth consent callback was captured and validated by the broker.
+- code: webhook_registered
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Webhook registration and signature setup completed.
+- code: integration_verified
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Integration sandbox verification completed successfully.
+- code: human_input_received
+  actor_type: human
+  is_manual: false
+  requires_comment: true
+  requires_artifact: false
+  description: Human input satisfied the currently open structured question.
+- code: human_comment_ask
+  actor_type: human
+  is_manual: true
+  requires_comment: true
+  requires_artifact: false
+  description: A human explicitly requested a new agent turn with @ask.
+- code: system_plan_built
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Planning and decomposition completed.
+- code: system_ready_check_passed
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Readiness validation passed.
+- code: system_build_started
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: The build loop started with an active run and runner lease.
+- code: system_build_finished
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: The build loop completed and produced a build report.
+- code: system_review_finished
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Agent review and verification completed.
+- code: system_human_gate_required
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: The workflow reached a human decision gate.
+- code: human_status_change
+  actor_type: human
+  is_manual: true
+  requires_comment: true
+  requires_artifact: false
+  description: A human requested a valid manual override through the same validator path.
+- code: human_decision_given
+  actor_type: human
+  is_manual: true
+  requires_comment: true
+  requires_artifact: true
+  description: A human provided a review, approval, or decision.
+- code: system_checks_green
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Required CI or gate checks turned green.
+- code: system_deploy_started
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Merge or deploy execution has started.
+- code: system_deploy_finished
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Rollout and smoke checks completed.
+- code: system_monitoring_passed
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: Monitoring window completed successfully.
+- code: system_block_detected
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: A technical or external blocker was detected.
+- code: system_block_cleared
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: A previously recorded blocker is now cleared.
+- code: system_safety_stop
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: The workflow stopped because of a policy or safety condition.
+- code: human_cancel
+  actor_type: human
+  is_manual: true
+  requires_comment: true
+  requires_artifact: true
+  description: A human canceled the issue.
+- code: system_duplicate_detected
+  actor_type: system
+  is_manual: false
+  requires_comment: false
+  requires_artifact: true
+  description: A canonical duplicate issue was identified.

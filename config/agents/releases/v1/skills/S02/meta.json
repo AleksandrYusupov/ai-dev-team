@@ -1,0 +1,53 @@
+{
+  "id": "S02",
+  "version": "v1",
+  "name": "Duplicate & Similar Issue Detector",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Ищет дубликаты, близкие прошлые задачи, связанные PR/incident/postmortem.",
+    "Seed rationale: Снимает шум в Triage."
+  ],
+  "inputs": [
+    "Использовать semantic search по issue corpus, PR titles, incidents, docs."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Ищет дубликаты, близкие прошлые задачи, связанные PR/incident/postmortem.",
+  "why": "Снимает шум в Triage.",
+  "download_ref": null,
+  "build_spec": "Использовать semantic search по issue corpus, PR titles, incidents, docs.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S02",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

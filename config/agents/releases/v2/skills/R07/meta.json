@@ -1,0 +1,57 @@
+{
+  "id": "R07",
+  "version": "v1",
+  "name": "Anthropic doc-coauthoring",
+  "category": "reusable",
+  "availability": "downloadable",
+  "kind": "reusable",
+  "runtime_dependency": false,
+  "reference_only_default": true,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "reference_only",
+  "when_to_use": [
+    "Официальный пример скилла для совместного написания документов.",
+    "Seed rationale: Хорошая база для DocsAgent, SpecAgent, ADR/PLAN generation."
+  ],
+  "inputs": [
+    "TBD: formalize required inputs."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks.",
+    "Do not enable this skill as a runtime dependency until an explicit import decision is approved."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Официальный пример скилла для совместного написания документов.",
+  "why": "Хорошая база для DocsAgent, SpecAgent, ADR/PLAN generation.",
+  "download_ref": {
+    "title": "doc-coauthoring",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/doc-coauthoring"
+  },
+  "build_spec": null,
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/R07",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

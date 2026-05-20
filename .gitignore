@@ -1,0 +1,50 @@
+.DS_Store
+._*
+
+# Local environment and secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Dependencies and package-manager caches
+node_modules/
+.pnpm-store/
+
+# Build outputs and generated TypeScript artifacts
+dist/
+coverage/
+.turbo/
+*.tsbuildinfo
+*.d.ts.map
+*.js.map
+
+# Local agent, IDE, and runtime state
+.claude/
+.codex/
+.serena/
+.idea/
+.vscode/
+/04_AGENT_CHANGELOG.md
+!building_agents/rules_examples/04_AGENT_CHANGELOG.md
+
+# Private source notes and diagram exports
+source/
+
+# Runner-local work areas
+.runner-managed-skills/
+.runner-workspace/
+.runner-worktrees/
+.runner-artifacts/
+
+# Logs and local scratch
+*.log
+*.tmp
+*.bak
+*backup*

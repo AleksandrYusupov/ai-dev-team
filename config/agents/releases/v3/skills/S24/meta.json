@@ -1,0 +1,58 @@
+{
+  "id": "S24",
+  "version": "v1",
+  "name": "Secure Coding Reviewer",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "human_gate_required",
+  "when_to_use": [
+    "Проверяет authn/authz, validation, XSS/SSRF/CSRF, secrets, crypto misuse, logging of sensitive data, tenant isolation.",
+    "Seed rationale: Для SecurityAgent и ReviewAgent."
+  ],
+  "inputs": [
+    "Опирается на OWASP ASVS/SCP, repo threat model, data classification."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks.",
+    "Do not execute protected, irreversible, or approval-bound actions without the declared human gate."
+  ],
+  "human_gate": {
+    "required": true,
+    "zones": [
+      "architecture_sign_off",
+      "final_review_merge",
+      "protected_deploy"
+    ],
+    "notes": "Risk-sensitive skill: final execution must stay behind explicit human approval."
+  },
+  "description": "Проверяет authn/authz, validation, XSS/SSRF/CSRF, secrets, crypto misuse, logging of sensitive data, tenant isolation.",
+  "why": "Для SecurityAgent и ReviewAgent.",
+  "download_ref": null,
+  "build_spec": "Опирается на OWASP ASVS/SCP, repo threat model, data classification.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S24",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

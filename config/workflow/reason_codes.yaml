@@ -1,0 +1,217 @@
+- code: rework_failed_review
+  category: rework
+  description: Review or verification found issues that require rework.
+  allowed_on_transitions:
+    - coding_to_rework_system_safety_stop
+    - agent_review_to_rework_system_review_finished
+    - ready_to_merge_to_rework_system_safety_stop
+- code: rework_spec_gap
+  category: rework
+  description: Specification or planning gaps require a new pass.
+  allowed_on_transitions:
+    - planned_to_rework_system_safety_stop
+    - rework_to_needs_spec_system_rework_routed
+- code: rework_human_feedback
+  category: rework
+  description: Human feedback requires implementation changes before merge.
+  allowed_on_transitions:
+    - needs_human_decision_to_rework_human_decision_given
+- code: rework_post_deploy_issue
+  category: rework
+  description: Deploy or monitoring found a regression or incident.
+  allowed_on_transitions:
+    - deploying_to_rework_system_safety_stop
+    - monitoring_to_rework_system_safety_stop
+- code: block_external_dependency
+  category: blocked
+  description: An external dependency prevents further execution.
+  allowed_on_transitions:
+    - planned_to_blocked_system_block_detected
+    - ready_for_build_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+    - blocked_to_ready_for_build_system_block_cleared
+- code: integration_missing_credentials
+  category: needs
+  description: Integration credentials or secret slots are still missing.
+  allowed_on_transitions:
+    - triage_to_needs_input_system_input_required
+    - needs_spec_to_needs_input_system_input_required
+    - rework_to_needs_input_system_input_required
+    - planned_to_needs_input_credential_required
+    - planned_to_needs_input_system_input_required
+    - ready_for_build_to_needs_input_system_input_required
+- code: integration_vendor_console_required
+  category: needs
+  description: Human action is required in the vendor console before execution can continue.
+  allowed_on_transitions:
+    - triage_to_needs_input_system_input_required
+    - needs_spec_to_needs_input_system_input_required
+    - rework_to_needs_input_system_input_required
+    - planned_to_needs_input_credential_required
+    - planned_to_needs_input_system_input_required
+    - ready_for_build_to_needs_input_system_input_required
+- code: integration_invalid_scope
+  category: blocked
+  description: Granted vendor scopes do not satisfy the planned integration contract.
+  allowed_on_transitions:
+    - planned_to_blocked_system_block_detected
+    - ready_for_build_to_blocked_system_block_detected
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: integration_webhook_verification_failed
+  category: blocked
+  description: Webhook registration exists but signature verification or replay safety failed.
+  allowed_on_transitions:
+    - planned_to_blocked_system_block_detected
+    - ready_for_build_to_blocked_system_block_detected
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: integration_sandbox_unavailable
+  category: blocked
+  description: Vendor sandbox or integration lab is unavailable.
+  allowed_on_transitions:
+    - planned_to_blocked_system_block_detected
+    - ready_for_build_to_blocked_system_block_detected
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: integration_vendor_outage
+  category: blocked
+  description: The vendor platform or dependency is unavailable for the integration path.
+  allowed_on_transitions:
+    - planned_to_blocked_system_block_detected
+    - ready_for_build_to_blocked_system_block_detected
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: integration_rate_limit_lockout
+  category: blocked
+  description: Vendor or sandbox rate limiting has locked out the current integration flow.
+  allowed_on_transitions:
+    - planned_to_blocked_system_block_detected
+    - ready_for_build_to_blocked_system_block_detected
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: integration_broker_outage
+  category: blocked
+  description: Secret or OAuth broker infrastructure is unavailable for the integration flow.
+  allowed_on_transitions:
+    - planned_to_blocked_system_block_detected
+    - ready_for_build_to_blocked_system_block_detected
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: integration_token_expired_or_revoked
+  category: blocked
+  description: Token handle expired, was revoked, or refresh failed.
+  allowed_on_transitions:
+    - ready_for_build_to_blocked_system_block_detected
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: block_runner_outage
+  category: blocked
+  description: Runner or infrastructure availability is preventing execution.
+  allowed_on_transitions:
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: needs_business_decision
+  category: needs
+  description: A business decision is still required before the issue can continue.
+  allowed_on_transitions:
+    - planned_to_needs_input_system_input_required
+    - ready_for_build_to_needs_input_system_input_required
+    - coding_to_needs_input_system_input_required
+    - agent_review_to_needs_input_system_input_required
+    - needs_human_decision_to_needs_input_system_input_required
+- code: needs_missing_file
+  category: needs
+  description: A required file, artifact, or reference is still missing from the issue context.
+  allowed_on_transitions:
+    - triage_to_needs_input_system_input_required
+    - needs_spec_to_needs_input_system_input_required
+    - rework_to_needs_input_system_input_required
+    - planned_to_needs_input_system_input_required
+- code: needs_scope_clarification
+  category: needs
+  description: The issue scope remains ambiguous and needs a structured human clarification.
+  allowed_on_transitions:
+    - triage_to_needs_input_system_input_required
+    - needs_spec_to_needs_input_system_input_required
+    - rework_to_needs_input_system_input_required
+    - planned_to_needs_input_system_input_required
+- code: needs_credential_upload
+  category: needs
+  description: A credential slot must be populated through the approved credential flow.
+  allowed_on_transitions:
+    - planned_to_needs_input_credential_required
+    - ready_for_build_to_needs_input_system_input_required
+- code: needs_scope_approval
+  category: needs
+  description: Human approval is required for the requested external scopes or permissions.
+  allowed_on_transitions:
+    - planned_to_needs_input_credential_required
+    - ready_for_build_to_needs_input_system_input_required
+- code: needs_oauth_consent
+  category: needs
+  description: Human browser-based OAuth consent must complete before execution can continue.
+  allowed_on_transitions:
+    - planned_to_needs_input_credential_required
+    - ready_for_build_to_needs_input_system_input_required
+- code: needs_redirect_uri_registration
+  category: needs
+  description: A redirect URI must be registered in the vendor console before execution can continue.
+  allowed_on_transitions:
+    - planned_to_needs_input_credential_required
+    - ready_for_build_to_needs_input_system_input_required
+- code: needs_webhook_registration
+  category: needs
+  description: A webhook endpoint or subscription must be registered before execution can continue.
+  allowed_on_transitions:
+    - planned_to_needs_input_credential_required
+    - ready_for_build_to_needs_input_system_input_required
+- code: needs_provider_console_action
+  category: needs
+  description: A human must complete a provider-console action before the workflow may resume.
+  allowed_on_transitions:
+    - planned_to_needs_input_credential_required
+    - planned_to_needs_input_system_input_required
+    - ready_for_build_to_needs_input_system_input_required
+- code: blocked_ci_outage
+  category: blocked
+  description: CI or a required verification service is unavailable.
+  allowed_on_transitions:
+    - ready_for_build_to_blocked_system_block_detected
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: blocked_dependency_pending
+  category: blocked
+  description: Execution is waiting on an external dependency or upstream deliverable.
+  allowed_on_transitions:
+    - planned_to_blocked_system_block_detected
+    - ready_for_build_to_blocked_system_block_detected
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: blocked_waiting_external_merge
+  category: blocked
+  description: Another merge or external change must land before execution can continue safely.
+  allowed_on_transitions:
+    - ready_for_build_to_blocked_system_block_detected
+    - coding_to_blocked_system_block_detected
+    - agent_review_to_blocked_system_block_detected
+- code: rework_integration_readiness_gap
+  category: rework
+  description: Integration readiness or onboarding assumptions were incorrect and require another implementation pass.
+  allowed_on_transitions:
+    - planned_to_rework_system_safety_stop
+    - agent_review_to_rework_system_review_finished
+- code: cancel_by_human
+  category: cancel
+  description: A human explicitly canceled the issue.
+  allowed_on_transitions:
+    - triage_to_canceled_human_cancel
+    - needs_spec_to_canceled_human_cancel
+    - needs_input_to_canceled_human_cancel
+    - needs_human_decision_to_canceled_human_cancel
+    - blocked_to_canceled_human_cancel
+- code: duplicate_canonical_issue
+  category: duplicate
+  description: The issue maps to another canonical issue.
+  allowed_on_transitions:
+    - triage_to_duplicate_system_duplicate_detected

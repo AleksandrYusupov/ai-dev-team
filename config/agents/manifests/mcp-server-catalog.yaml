@@ -1,0 +1,374 @@
+# Canonical MCP Server Catalog
+# Source of truth for all MCP servers available to the agent team.
+# Runner-host config reads this to resolve server names -> commands, scopes, env vars.
+#
+# Scope semantics:
+#   host      — one process shared across all executions on this runner
+#   repo      — one process per repository slug
+#   exclusive — one process per execution session
+#
+# Priority semantics (from building_agents/agent_tools_and_mcp.md):
+#   must      — agent cannot perform its core mission without this
+#   strong    — significantly improves quality/speed
+#   nice      — useful but can be added later
+
+version: v1
+
+servers:
+
+  # ────────────────────────────────────────────────
+  # Host-scope servers (shared across all executions)
+  # ────────────────────────────────────────────────
+
+  linear:
+    display_name: Linear
+    description: Issues, comments, statuses, labels, projects, milestones
+    scope: host
+    priority: must
+    package: "@anthropic/linear-mcp-server"
+    command_template: "npx -y @anthropic/linear-mcp-server"
+    required_env:
+      - LINEAR_API_TOKEN
+    optional_env: []
+    notes: >
+      Official remote MCP at https://mcp.linear.app/mcp also available (OAuth).
+      For runner-host we use the local stdio server to avoid OAuth complexity.
+    used_by_roles:
+      - orchestrator
+      - intake_agent
+      - context_agent
+      - spec_agent
+      - reporter_agent
+      - integration_agent
+
+  obsidian:
+    display_name: Obsidian
+    description: ADR, runbooks, architecture notes, knowledge base
+    scope: host
+    priority: must
+    package: "@mauricio.wolff/mcp-obsidian"
+    command_template: "npx -y @mauricio.wolff/mcp-obsidian@latest ${KNOWLEDGE_SYNC_VAULT_ROOT}"
+    required_env:
+      - KNOWLEDGE_SYNC_VAULT_ROOT
+    optional_env: []
+    notes: >
+      Vault root must point to the Obsidian vault directory.
+      Alternative packages: obsidian-mcp-server (cyanheads).
+    used_by_roles:
+      - orchestrator
+      - context_agent
+      - spec_agent
+      - architect_agent
+      - plan_agent
+      - docs_agent
+
+  context7:
+    display_name: Context7
+    description: Up-to-date documentation for any libraries and frameworks
+    scope: host
+    priority: strong
+    package: "@upstash/context7-mcp"
+    command_template: "npx -y @upstash/context7-mcp@latest"
+    required_env: []
+    optional_env: []
+    notes: >
+      Remote MCP also available at https://mcp.context7.com/mcp.
+      No auth required for the local stdio server.
+    used_by_roles:
+      - context_agent
+      - build_agent_backend
+      - build_agent_frontend
+      - build_agent_integrations
+      - test_agent
+      - review_agent
+
+  postgres:
+    display_name: PostgreSQL
+    description: Workflow state, registry, integration metadata queries
+    scope: host
+    priority: must
+    package: "@crystaldba/postgres-mcp"
+    command_template: "npx -y @crystaldba/postgres-mcp@latest ${DATABASE_URL}"
+    required_env:
+      - DATABASE_URL
+    optional_env: []
+    notes: >
+      Provides read access to workflow state, repo registry, integration auth plane metadata.
+      Write access is gated by role policy; most agents use read-only.
+    used_by_roles:
+      - orchestrator
+      - context_agent
+      - integration_agent
+      - build_agent_integrations
+
+  fetch:
+    display_name: Fetch
+    description: HTTP requests to vendor docs, API specs, external resources
+    scope: host
+    priority: strong
+    package: "@modelcontextprotocol/server-fetch"
+    command_template: "npx -y @modelcontextprotocol/server-fetch@latest"
+    required_env: []
+    optional_env: []
+    notes: >
+      Network access is controlled by RUNNER_ALLOWED_DOC_DOMAINS allowlist.
+      Used for loading vendor API documentation and external specs.
+    used_by_roles:
+      - context_agent
+      - spec_agent
+      - build_agent_integrations
+      - integration_agent
+
+  memory:
+    display_name: Memory
+    description: Knowledge graph for persistent context between sessions
+    scope: host
+    priority: strong
+    package: "@modelcontextprotocol/server-memory"
+    command_template: "npx -y @modelcontextprotocol/server-memory@latest"
+    required_env: []
+    optional_env:
+      - MEMORY_FILE_PATH
+    notes: >
+      Stores persistent knowledge graph on disk.
+      Default file path can be overridden with MEMORY_FILE_PATH env var.
+    used_by_roles:
+      - orchestrator
+      - context_agent
+      - reporter_agent
+
+  sequential-thinking:
+    display_name: Sequential Thinking
+    description: Structured step-by-step reasoning for complex decisions
+    scope: exclusive
+    priority: nice
+    package: "@modelcontextprotocol/server-sequential-thinking"
+    command_template: "npx -y @modelcontextprotocol/server-sequential-thinking@latest"
+    required_env: []
+    optional_env: []
+    notes: >
+      Each execution session gets its own instance to avoid reasoning state leaks.
+    used_by_roles:
+      - orchestrator
+      - architect_agent
+      - plan_agent
+      - security_agent
+
+  # ────────────────────────────────────────────────
+  # Repo-scope servers (one per repository)
+  # ────────────────────────────────────────────────
+
+  github:
+    display_name: GitHub
+    description: Repos, PRs, issues, commits, diffs, code search, CODEOWNERS
+    scope: repo
+    priority: must
+    package: "@modelcontextprotocol/server-github"
+    command_template: "npx -y @modelcontextprotocol/server-github@latest"
+    required_env:
+      - GITHUB_PERSONAL_ACCESS_TOKEN
+    optional_env: []
+    notes: >
+      Requires a GitHub PAT with repo scope.
+      Used for PR management, code search, and CI status checks.
+    used_by_roles:
+      - orchestrator
+      - context_agent
+      - build_agent_backend
+      - build_agent_frontend
+      - build_agent_integrations
+      - test_agent
+      - review_agent
+      - release_agent
+
+  filesystem:
+    display_name: Filesystem
+    description: Read/write files in runner working directories
+    scope: repo
+    priority: must
+    package: "@modelcontextprotocol/server-filesystem"
+    command_template: "npx -y @modelcontextprotocol/server-filesystem@latest ${RUNNER_WORKSPACE_ROOT}"
+    required_env:
+      - RUNNER_WORKSPACE_ROOT
+    optional_env: []
+    notes: >
+      Restricted to runner workspace root directory.
+      Build agents primarily use this for file operations.
+    used_by_roles:
+      - context_agent
+      - build_agent_backend
+      - build_agent_frontend
+      - build_agent_integrations
+      - build_agent_data_migration
+      - build_agent_infra_iac
+
+  git:
+    display_name: Git
+    description: Read, search, blame, log, diff at repo level
+    scope: repo
+    priority: must
+    package: "@modelcontextprotocol/server-git"
+    command_template: "npx -y @modelcontextprotocol/server-git@latest"
+    required_env: []
+    optional_env: []
+    notes: >
+      Provides structured git operations without shell exec.
+      Complements GitHub MCP for local repo operations.
+    used_by_roles:
+      - context_agent
+      - build_agent_backend
+      - build_agent_frontend
+      - build_agent_integrations
+      - review_agent
+      - test_agent
+
+  serena:
+    display_name: Serena
+    description: Semantic code analysis — structure, references, definitions, types
+    scope: repo
+    priority: must
+    package: serena
+    command_template: "uvx --from git+https://github.com/oraios/serena serena-mcp-server"
+    required_env: []
+    optional_env: []
+    notes: >
+      Requires Python/uv installed. Uses the Serena project config file.
+      Provides deep semantic understanding of code structure.
+    used_by_roles:
+      - context_agent
+      - build_agent_backend
+      - build_agent_frontend
+      - build_agent_integrations
+      - review_agent
+      - test_agent
+      - security_agent
+
+  # ────────────────────────────────────────────────
+  # Custom integration-boundary MCPs (host-scope)
+  # ────────────────────────────────────────────────
+
+  secret-broker:
+    display_name: Secret Broker
+    description: Credential metadata plane — slot lifecycle, token handles, status checks. No raw secret access.
+    scope: host
+    priority: must
+    package: "@ai-dev-team/secret-broker-mcp"
+    command_template: "node mcp/secret-broker-mcp/dist/index.js"
+    required_env:
+      - INTERNAL_API_BEARER_TOKEN
+    optional_env:
+      - CONTROL_API_BASE_URL
+    notes: >
+      Custom MCP server. Manages credential slots and token handles via control-api.
+      Intentionally has NO tool for reading raw secret values — only metadata.
+    used_by_roles:
+      - integration_agent
+      - build_agent_integrations
+      - security_agent
+
+  oauth-broker:
+    display_name: OAuth Broker
+    description: OAuth flow lifecycle — registrations, consent sessions, callback state. No raw token access.
+    scope: host
+    priority: must
+    package: "@ai-dev-team/oauth-broker-mcp"
+    command_template: "node mcp/oauth-broker-mcp/dist/index.js"
+    required_env:
+      - INTERNAL_API_BEARER_TOKEN
+    optional_env:
+      - CONTROL_API_BASE_URL
+    notes: >
+      Custom MCP server. Manages OAuth client registrations and consent flows via control-api.
+      No access to client_secret values or raw authorization codes.
+    used_by_roles:
+      - integration_agent
+      - build_agent_integrations
+
+  integration-lab:
+    display_name: Integration Lab
+    description: Validation runs, webhook management, sandbox readiness checks.
+    scope: host
+    priority: must
+    package: "@ai-dev-team/integration-lab-mcp"
+    command_template: "node mcp/integration-lab-mcp/dist/index.js"
+    required_env:
+      - INTERNAL_API_BEARER_TOKEN
+    optional_env:
+      - CONTROL_API_BASE_URL
+    notes: >
+      Custom MCP server. Triggers validation tests and manages webhook registrations via control-api.
+      Probe requests limited by INTEGRATION_LAB_MAX_PROBE_REQUESTS.
+    used_by_roles:
+      - integration_agent
+      - build_agent_integrations
+      - test_agent
+
+  policy-guard:
+    display_name: Policy Guard
+    description: Runtime policy queries — role policies, denied actions, human gates.
+    scope: host
+    priority: strong
+    package: "@ai-dev-team/policy-guard-mcp"
+    command_template: "node mcp/policy-guard-mcp/dist/index.js"
+    required_env:
+      - TOOLING_POLICY_PATH
+    optional_env: []
+    notes: >
+      Custom MCP server. Reads tooling-policy.yaml and provides read-only policy queries.
+      No override or exception granting capabilities.
+    used_by_roles:
+      - security_agent
+      - release_agent
+      - build_agent_infra_iac
+      - provisioner_agent
+
+# ────────────────────────────────────────────────
+# Abstract MCP ref resolution
+# Maps tooling-policy abstract refs to concrete server compositions
+# ────────────────────────────────────────────────
+
+abstract_ref_resolution:
+  repo-registry-mcp:
+    description: Repository and project registry queries
+    resolved_by:
+      - postgres
+    notes: >
+      Registry data lives in Postgres tables (repository_registry, project_registry).
+      Future: may become a dedicated thin API or custom MCP wrapper.
+
+  knowledge-service-mcp:
+    description: Knowledge base, docs, ADR retrieval
+    resolved_by:
+      - obsidian
+      - context7
+      - fetch
+    notes: >
+      Composed from multiple sources: Obsidian for internal KB,
+      Context7 for library docs, Fetch for external vendor docs.
+
+  artifact-registry-mcp:
+    description: Build artifacts, context packs, staged outputs
+    resolved_by:
+      - postgres
+      - filesystem
+    notes: >
+      Artifact metadata in Postgres, artifact files in filesystem.
+      Future: may become a dedicated artifact service.
+
+  comment-memory-mcp:
+    description: Decision logs, comment thread summaries, persistent context
+    resolved_by:
+      - memory
+      - postgres
+    notes: >
+      Memory MCP for cross-session knowledge graph,
+      Postgres for Linear comment data and decision summaries.
+
+  policy-guard-mcp:
+    description: Policy enforcement, capability checks, gate validation
+    resolved_by:
+      - policy-guard
+    notes: >
+      Custom MCP server reads tooling-policy.yaml for role-based policy queries.
+      Lease-time preflight checks in runner-host remain the enforcement layer;
+      policy-guard-mcp provides runtime query access for agents.

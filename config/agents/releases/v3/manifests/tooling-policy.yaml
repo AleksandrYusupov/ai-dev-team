@@ -1,0 +1,426 @@
+role_tool_policies:
+  - role_id: orchestrator
+    allowed_tools:
+      - workflow.read
+      - workflow.plan_update
+      - repo_registry.read
+      - kb.read
+      - comment_memory.write
+    required_mcp_refs:
+      - repo-registry-mcp
+      - knowledge-service-mcp
+      - comment-memory-mcp
+    write_scopes:
+      - task_plans
+      - coordination_notes
+    denied_tools:
+      - repo.write_patch
+      - deploy.production
+    human_gated_tools:
+      - workflow.override
+    notes: Coordinates work and routing; does not modify product code directly.
+  - role_id: intake_agent
+    allowed_tools:
+      - workflow.read
+      - repo_registry.read
+      - kb.read
+      - comment_memory.write
+    required_mcp_refs:
+      - repo-registry-mcp
+      - knowledge-service-mcp
+    write_scopes:
+      - intake_notes
+    denied_tools:
+      - repo.write_patch
+      - deploy.production
+    human_gated_tools:
+      - issue_contract.override
+    notes: Normalizes task intent before build work begins.
+  - role_id: context_agent
+    allowed_tools:
+      - repo.read
+      - repo_registry.read
+      - kb.read
+      - context_bundle.write
+      - artifact_registry.write
+    required_mcp_refs:
+      - repo-registry-mcp
+      - knowledge-service-mcp
+      - artifact-registry-mcp
+    write_scopes:
+      - context_packs
+      - research_notes
+    denied_tools:
+      - repo.write_patch
+      - deploy.production
+      - raw_secret.read
+      - raw_secret.write
+    human_gated_tools: []
+    notes: Curates context packs and cross-repo loading hints. Publishes context_pack and decision_summary as typed output artifacts. No code modification or deployment access.
+  - role_id: spec_agent
+    allowed_tools:
+      - repo.read
+      - kb.read
+      - docs.write
+      - comment_memory.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+      - comment-memory-mcp
+    write_scopes:
+      - specs
+      - project_kb
+    denied_tools:
+      - repo.write_patch
+      - deploy.production
+    human_gated_tools:
+      - product_scope_change
+    notes: Owns structured requirements, not implementation.
+  - role_id: architect_agent
+    allowed_tools:
+      - repo.read
+      - kb.read
+      - docs.write
+      - workflow.plan_update
+    required_mcp_refs:
+      - knowledge-service-mcp
+    write_scopes:
+      - architecture_notes
+      - project_kb
+    denied_tools:
+      - deploy.production
+    human_gated_tools:
+      - architecture_override
+    notes: Produces architectural constraints and approved patterns.
+  - role_id: plan_agent
+    allowed_tools:
+      - workflow.read
+      - workflow.plan_update
+      - repo.read
+      - kb.read
+    required_mcp_refs:
+      - knowledge-service-mcp
+    write_scopes:
+      - task_plans
+    denied_tools:
+      - repo.write_patch
+    human_gated_tools: []
+    notes: Converts specs and context into executable plans.
+  - role_id: build_agent_backend
+    allowed_tools:
+      - repo.read
+      - repo.write_patch
+      - tests.run
+      - docs.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+    write_scopes:
+      - repository_code
+      - repository_changelog
+      - project_kb
+    denied_tools:
+      - deploy.production
+    human_gated_tools:
+      - schema_breaking_change
+    notes: Backend implementation within repo constraints.
+  - role_id: build_agent_frontend
+    allowed_tools:
+      - repo.read
+      - repo.write_patch
+      - tests.run
+      - docs.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+    write_scopes:
+      - repository_code
+      - repository_changelog
+      - project_kb
+    denied_tools:
+      - deploy.production
+    human_gated_tools:
+      - design_system_override
+    notes: Frontend implementation within existing design language.
+  - role_id: build_agent_integrations
+    allowed_tools:
+      - repo.read
+      - repo.write_patch
+      - tests.run
+      - docs.write
+      - integration_config.read
+    required_mcp_refs:
+      - knowledge-service-mcp
+      - policy-guard-mcp
+    write_scopes:
+      - repository_code
+      - repository_changelog
+      - project_kb
+    denied_tools:
+      - raw_secret.read
+      - raw_secret.write
+      - deploy.production
+    human_gated_tools:
+      - vendor_console_action
+      - credential_rotation
+    notes: Must preserve metadata plane versus credential plane boundaries.
+  - role_id: build_agent_data_migration
+    allowed_tools:
+      - repo.read
+      - repo.write_patch
+      - tests.run
+      - migration.run_local
+      - docs.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+    write_scopes:
+      - repository_code
+      - repository_changelog
+      - project_kb
+    denied_tools:
+      - deploy.production
+    human_gated_tools:
+      - destructive_data_operation
+    notes: Migration authoring with explicit rollback awareness.
+  - role_id: build_agent_infra_iac
+    allowed_tools:
+      - repo.read
+      - repo.write_patch
+      - tests.run
+      - docs.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+      - policy-guard-mcp
+    write_scopes:
+      - repository_code
+      - repository_changelog
+      - project_kb
+    denied_tools:
+      - deploy.production
+    human_gated_tools:
+      - infrastructure_apply
+    notes: Changes IaC definitions but does not apply protected infrastructure by default.
+  - role_id: test_agent
+    allowed_tools:
+      - repo.read
+      - tests.run
+      - qa.report_write
+      - docs.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+    write_scopes:
+      - qa_notes
+      - repository_changelog
+      - project_kb
+    denied_tools:
+      - repo.write_patch
+      - deploy.production
+    human_gated_tools: []
+    notes: Runs verification and captures failures or residual risk. Writes test code only, not production patches.
+  - role_id: review_agent
+    allowed_tools:
+      - repo.read
+      - tests.run
+      - review.report_write
+      - docs.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+    write_scopes:
+      - review_notes
+      - project_kb
+    denied_tools:
+      - repo.write_patch
+      - deploy.production
+    human_gated_tools: []
+    notes: Review-first role with findings as the primary output.
+  - role_id: security_agent
+    allowed_tools:
+      - repo.read
+      - tests.run
+      - security.report_write
+      - docs.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+      - policy-guard-mcp
+    write_scopes:
+      - security_notes
+      - project_kb
+    denied_tools:
+      - repo.write_patch
+      - raw_secret.read
+    human_gated_tools:
+      - policy_exception
+    notes: Reviews security posture and exception requests.
+  - role_id: docs_agent
+    allowed_tools:
+      - repo.read
+      - docs.write
+      - kb.write
+      - changelog.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+    write_scopes:
+      - project_kb
+      - repository_docs
+      - repository_changelog
+    denied_tools:
+      - deploy.production
+    human_gated_tools: []
+    notes: Synchronizes docs after behavior or config changes.
+  - role_id: release_agent
+    allowed_tools:
+      - repo.read
+      - release.publish
+      - changelog.write
+      - docs.write
+    required_mcp_refs:
+      - artifact-registry-mcp
+      - policy-guard-mcp
+    write_scopes:
+      - release_snapshots
+      - repository_changelog
+      - project_kb
+    denied_tools:
+      - repo.write_patch
+    human_gated_tools:
+      - deploy.production
+      - protected_branch_release
+    notes: Owns release publication and protected deployment flow.
+  - role_id: monitoring_agent
+    allowed_tools:
+      - telemetry.read
+      - docs.write
+      - comment_memory.write
+    required_mcp_refs:
+      - comment-memory-mcp
+    write_scopes:
+      - operational_notes
+      - project_kb
+    denied_tools:
+      - repo.write_patch
+      - deploy.production
+    human_gated_tools:
+      - alert_suppression
+    notes: Observability and runtime signal triage.
+  - role_id: reporter_agent
+    allowed_tools:
+      - workflow.read
+      - docs.write
+      - kb.write
+      - changelog.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+      - comment-memory-mcp
+    write_scopes:
+      - project_kb
+      - status_reports
+    denied_tools:
+      - repo.write_patch
+      - deploy.production
+    human_gated_tools: []
+    notes: Summaries and status writebacks only.
+  - role_id: provisioner_agent
+    allowed_tools:
+      - platform.read
+      - platform.provision_plan
+      - docs.write
+    required_mcp_refs:
+      - artifact-registry-mcp
+      - policy-guard-mcp
+    write_scopes:
+      - platform_notes
+      - project_kb
+    denied_tools:
+      - repo.write_patch
+    human_gated_tools:
+      - platform_apply
+    notes: Plans provisioning and capacity changes.
+  - role_id: dependency_agent
+    allowed_tools:
+      - repo.read
+      - repo.write_patch
+      - tests.run
+      - docs.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+    write_scopes:
+      - repository_code
+      - repository_changelog
+      - project_kb
+    denied_tools:
+      - deploy.production
+    human_gated_tools:
+      - major_version_upgrade
+    notes: Manages upgrades with explicit compatibility checks.
+  - role_id: evals_agent
+    allowed_tools:
+      - repo.read
+      - evals.run
+      - docs.write
+      - kb.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+    write_scopes:
+      - eval_notes
+      - project_kb
+    denied_tools:
+      - deploy.production
+    human_gated_tools: []
+    notes: Maintains evaluation coverage and reporting.
+  - role_id: integration_agent
+    allowed_tools:
+      - repo.read
+      - tests.run
+      - integration_config.read
+      - docs.write
+    required_mcp_refs:
+      - knowledge-service-mcp
+      - policy-guard-mcp
+    write_scopes:
+      - integration_notes
+      - project_kb
+    denied_tools:
+      - raw_secret.read
+      - raw_secret.write
+    human_gated_tools:
+      - vendor_console_action
+    notes: Cross-boundary validation and handoff role for integrations.
+
+provider_tool_policies:
+  - provider: codex
+    overlay_ref: codex/v1
+    allowed_tools:
+      - shell.exec
+      - patch.apply
+      - obsidian.read_write
+      - serena.navigate
+      - context7.query
+      - sequential_thinking.plan
+    denied_tools:
+      - unrestricted_network_side_effect
+    human_gated_tools:
+      - sandbox_escalation
+      - deploy.production
+      - destructive_command
+    write_scopes:
+      - workspace
+      - obsidian_vault
+      - release_snapshots
+    notes: Codex overlay uses shell and patching as primary implementation surfaces.
+  - provider: claude
+    overlay_ref: claude/v1
+    allowed_tools:
+      - shell.exec
+      - patch.apply
+      - obsidian.read_write
+      - memory.read_write
+      - context7.query
+      - subagent.dispatch
+    denied_tools:
+      - unrestricted_network_side_effect
+    human_gated_tools:
+      - sandbox_escalation
+      - deploy.production
+      - destructive_command
+    write_scopes:
+      - workspace
+      - obsidian_vault
+      - release_snapshots
+    notes: Claude overlay may use memory/sub-agent facilities but must preserve the same policy contract.

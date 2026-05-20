@@ -1,0 +1,53 @@
+{
+  "id": "S44",
+  "version": "v1",
+  "name": "@ask Conversation Handler",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Умеет отличать просто комментарий от явного prompt event с @ask и корректно резюмировать накопившуюся переписку перед ответом.",
+    "Seed rationale: Ключевой skill для работы внутри Linear comments."
+  ],
+  "inputs": [
+    "Игнорировать @ask в quotes/code blocks; respect current workflow state; create signal/resume semantics."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Умеет отличать просто комментарий от явного prompt event с @ask и корректно резюмировать накопившуюся переписку перед ответом.",
+  "why": "Ключевой skill для работы внутри Linear comments.",
+  "download_ref": null,
+  "build_spec": "Игнорировать @ask в quotes/code blocks; respect current workflow state; create signal/resume semantics.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S44",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "R09",
+  "version": "v1",
+  "name": "Awesome GitHub Copilot",
+  "category": "reusable",
+  "availability": "downloadable",
+  "kind": "reusable",
+  "runtime_dependency": false,
+  "reference_only_default": true,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "reference_only",
+  "when_to_use": [
+    "Большая community-коллекция custom agents, instructions, skills, hooks, workflows и plugins для Copilot.",
+    "Seed rationale: Полезна как каталог реальных паттернов и стартовых шаблонов, но требует ревью перед продом."
+  ],
+  "inputs": [
+    "TBD: formalize required inputs."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks.",
+    "Do not enable this skill as a runtime dependency until an explicit import decision is approved."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Большая community-коллекция custom agents, instructions, skills, hooks, workflows и plugins для Copilot.",
+  "why": "Полезна как каталог реальных паттернов и стартовых шаблонов, но требует ревью перед продом.",
+  "download_ref": {
+    "title": "github/awesome-copilot",
+    "url": "https://github.com/github/awesome-copilot"
+  },
+  "build_spec": null,
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/R09",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

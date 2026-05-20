@@ -1,0 +1,34 @@
+pack_id: reporting_writeback_core
+version: v1
+purpose: Поднимает новые repo/project scaffolds и golden paths.
+skill_refs:
+- F03
+- F08
+- F10
+- S36
+- S37
+- S38
+optional_skill_refs:
+- R04
+- R10
+providers:
+- claude
+- codex
+activation_conditions:
+  statuses:
+  - needs_human_decision
+  - needs_input
+  - done
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: false
+  zones: []
+  notes: Reporter writes human-facing summaries but does not make decisions.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A17
+- config/workflow/runtime_role_contracts.yaml#reporter_agent

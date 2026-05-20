@@ -1,0 +1,1002 @@
+- rule_id: triage_to_needs_spec_system_intake_complete
+  from_status: triage
+  to_status: needs_spec
+  trigger_code: system_intake_complete
+  owner_role: intake_agent
+  allowed_actor_types: [system]
+  guard_conditions: [brief_valid, contract_incomplete]
+  required_artifact_types: [intake_summary]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Standard path after successful intake normalization.
+- rule_id: triage_to_needs_input_system_input_required
+  from_status: triage
+  to_status: needs_input
+  trigger_code: system_input_required
+  owner_role: intake_agent
+  allowed_actor_types: [system]
+  guard_conditions: [critical_intake_fields_missing, structured_question_prepared]
+  required_artifact_types: [operator_question]
+  artifact_scope: operator_question
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Intake cannot proceed without new operator input.
+- rule_id: triage_to_planned_system_contract_built
+  from_status: triage
+  to_status: planned
+  trigger_code: system_contract_built
+  owner_role: intake_agent
+  allowed_actor_types: [system]
+  guard_conditions: [contract_complete, primary_repo_resolved, blockers_inspected]
+  required_artifact_types: [issue_contract_snapshot]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Skip needs_spec only when the contract is already complete.
+- rule_id: triage_to_duplicate_system_duplicate_detected
+  from_status: triage
+  to_status: duplicate
+  trigger_code: system_duplicate_detected
+  owner_role: intake_agent
+  allowed_actor_types: [system]
+  guard_conditions: [canonical_issue_identified]
+  required_artifact_types: [duplicate_link]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Persist the canonical issue reference before closing as duplicate.
+- rule_id: triage_to_canceled_human_cancel
+  from_status: triage
+  to_status: canceled
+  trigger_code: human_cancel
+  owner_role: human
+  allowed_actor_types: [human]
+  guard_conditions: [cancel_reason_present]
+  required_artifact_types: [cancel_reason]
+  artifact_scope: transition
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Terminal cancellation from triage.
+- rule_id: rework_to_needs_spec_system_rework_routed
+  from_status: rework
+  to_status: needs_spec
+  trigger_code: system_rework_routed
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [rework_classification_spec_gap]
+  required_artifact_types: [rework_routing_note]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Route to another specification pass.
+- rule_id: rework_to_planned_system_plan_built
+  from_status: rework
+  to_status: planned
+  trigger_code: system_plan_built
+  owner_role: plan_agent
+  allowed_actor_types: [system]
+  guard_conditions: [revised_contract_valid, revised_plan_built]
+  required_artifact_types: [revised_plan]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Rework resolved without returning to spec.
+- rule_id: rework_to_needs_input_system_input_required
+  from_status: rework
+  to_status: needs_input
+  trigger_code: system_input_required
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [missing_human_input, structured_question_prepared]
+  required_artifact_types: [operator_question]
+  artifact_scope: operator_question
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Rework cannot continue without new operator input.
+- rule_id: needs_spec_to_needs_input_system_input_required
+  from_status: needs_spec
+  to_status: needs_input
+  trigger_code: system_input_required
+  owner_role: spec_agent
+  allowed_actor_types: [system]
+  guard_conditions: [missing_fields_identified, structured_question_prepared]
+  required_artifact_types: [operator_question]
+  artifact_scope: operator_question
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Specification work is blocked on a human answer.
+- rule_id: needs_spec_to_planned_system_contract_built
+  from_status: needs_spec
+  to_status: planned
+  trigger_code: system_contract_built
+  owner_role: spec_agent
+  allowed_actor_types: [system]
+  guard_conditions: [contract_complete, open_questions_resolved]
+  required_artifact_types: [issue_contract_snapshot]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Full contract completion gate.
+- rule_id: needs_spec_to_canceled_human_cancel
+  from_status: needs_spec
+  to_status: canceled
+  trigger_code: human_cancel
+  owner_role: human
+  allowed_actor_types: [human]
+  guard_conditions: [cancel_reason_present]
+  required_artifact_types: [cancel_reason]
+  artifact_scope: transition
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Terminal cancellation from the specification lane.
+- rule_id: needs_input_to_needs_spec_human_input_received
+  from_status: needs_input
+  to_status: needs_spec
+  trigger_code: human_input_received
+  owner_role: orchestrator
+  allowed_actor_types: [human]
+  guard_conditions: [open_operator_question_present, answer_resolves_question, spec_loop_still_required]
+  required_artifact_types: [updated_issue_contract_draft]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Human input answered the question, but the spec loop still continues.
+- rule_id: needs_input_to_planned_human_input_received
+  from_status: needs_input
+  to_status: planned
+  trigger_code: human_input_received
+  owner_role: plan_agent
+  allowed_actor_types: [human]
+  guard_conditions: [open_operator_question_present, answer_resolves_question, contract_complete_enough_for_planning]
+  required_artifact_types: [updated_issue_contract_snapshot]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Human input unblocks the issue all the way to planning.
+- rule_id: needs_input_to_ready_for_build_human_input_received
+  from_status: needs_input
+  to_status: ready_for_build
+  trigger_code: human_input_received
+  owner_role: orchestrator
+  allowed_actor_types: [human]
+  guard_conditions:
+    [open_operator_question_present, answer_resolves_question, suspended_from_status_matches_ready_for_build]
+  required_artifact_types: [updated_issue_contract_snapshot]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Human input resumes a paused readiness lane without restarting planning.
+- rule_id: needs_input_to_coding_human_input_received
+  from_status: needs_input
+  to_status: coding
+  trigger_code: human_input_received
+  owner_role: orchestrator
+  allowed_actor_types: [human]
+  guard_conditions:
+    [open_operator_question_present, answer_resolves_question, suspended_from_status_matches_coding]
+  required_artifact_types: [updated_issue_contract_snapshot]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: resume
+  effect_on_lease: restore
+  notes: Human input resumes a paused coding lane from the stored suspended status.
+- rule_id: needs_input_to_agent_review_human_input_received
+  from_status: needs_input
+  to_status: agent_review
+  trigger_code: human_input_received
+  owner_role: orchestrator
+  allowed_actor_types: [human]
+  guard_conditions:
+    [open_operator_question_present, answer_resolves_question, suspended_from_status_matches_agent_review]
+  required_artifact_types: [updated_issue_contract_snapshot]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Human input resumes an agent-review lane without collapsing back to planning.
+- rule_id: needs_input_to_canceled_human_cancel
+  from_status: needs_input
+  to_status: canceled
+  trigger_code: human_cancel
+  owner_role: human
+  allowed_actor_types: [human]
+  guard_conditions: [cancel_reason_present]
+  required_artifact_types: [cancel_reason]
+  artifact_scope: transition
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Terminal cancellation while waiting for input.
+- rule_id: planned_to_ready_for_build_system_ready_check_passed
+  from_status: planned
+  to_status: ready_for_build
+  trigger_code: system_ready_check_passed
+  owner_role: plan_agent
+  allowed_actor_types: [system]
+  guard_conditions:
+    [
+      plan_artifact_exists,
+      dependency_report_clean_or_waived,
+      context_pack_frozen,
+      no_unresolved_blockers,
+      no_unresolved_secret_slots,
+      integration_prerequisites_satisfied_or_not_required,
+      prod_access_gate_satisfied_or_not_required,
+    ]
+  required_artifact_types: [plan_artifact, dependency_report, readiness_report]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Full readiness gate before execution starts.
+- rule_id: planned_to_needs_input_system_input_required
+  from_status: planned
+  to_status: needs_input
+  trigger_code: system_input_required
+  owner_role: integration_agent
+  allowed_actor_types: [system]
+  guard_conditions:
+    [structured_question_prepared, integration_prerequisites_missing]
+  required_artifact_types: [operator_question]
+  artifact_scope: operator_question
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Planning for an integration issue found unresolved auth or credential prerequisites.
+- rule_id: planned_to_needs_input_credential_required
+  from_status: planned
+  to_status: needs_input
+  trigger_code: credential_required
+  owner_role: integration_agent
+  allowed_actor_types: [system]
+  guard_conditions:
+    [credential_request_prepared, unresolved_secret_slots_present]
+  required_artifact_types: [credential_request]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Integration onboarding found a missing credential, redirect URI, scope approval, or vendor-console prerequisite that requires human action.
+- rule_id: needs_input_to_planned_credential_validated
+  from_status: needs_input
+  to_status: planned
+  trigger_code: credential_validated
+  owner_role: integration_agent
+  allowed_actor_types: [system]
+  guard_conditions:
+    [credential_slots_validated, planned_contract_still_current]
+  required_artifact_types: [credential_validation_report]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Sanitized credential validation unblocks the issue back into planning without exposing raw secret material.
+- rule_id: needs_input_to_planned_oauth_consent_completed
+  from_status: needs_input
+  to_status: planned
+  trigger_code: oauth_consent_completed
+  owner_role: integration_agent
+  allowed_actor_types: [system]
+  guard_conditions:
+    [oauth_consent_session_validated, required_scopes_granted]
+  required_artifact_types: [oauth_consent_session]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: OAuth callback capture and granted-scope validation completed, so planning can resume.
+- rule_id: needs_input_to_planned_webhook_registered
+  from_status: needs_input
+  to_status: planned
+  trigger_code: webhook_registered
+  owner_role: integration_agent
+  allowed_actor_types: [system]
+  guard_conditions:
+    [webhook_registration_verified, replay_safe_signature_check_passed]
+  required_artifact_types: [webhook_validation_report]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Webhook registration and replay-safe signature validation completed, so planning can resume.
+- rule_id: planned_to_ready_for_build_integration_verified
+  from_status: planned
+  to_status: ready_for_build
+  trigger_code: integration_verified
+  owner_role: integration_agent
+  allowed_actor_types: [system]
+  guard_conditions:
+    [
+      integration_smoke_passed,
+      no_unresolved_secret_slots,
+      integration_go_live_checklist_prepared,
+      prod_access_gate_satisfied_or_not_required,
+      no_unresolved_blockers,
+    ]
+  required_artifact_types:
+    [integration_smoke_report, integration_go_live_checklist]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Integration-specific sandbox verification can unlock readiness once sanitized onboarding artifacts are complete.
+- rule_id: planned_to_needs_human_decision_system_human_gate_required
+  from_status: planned
+  to_status: needs_human_decision
+  trigger_code: system_human_gate_required
+  owner_role: architect_agent
+  allowed_actor_types: [system]
+  guard_conditions: [decision_memo_prepared]
+  required_artifact_types: [decision_memo]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Planning reached an architecture or risk sign-off gate.
+- rule_id: planned_to_needs_human_decision_human_status_change
+  from_status: planned
+  to_status: needs_human_decision
+  trigger_code: human_status_change
+  owner_role: human
+  allowed_actor_types: [human]
+  guard_conditions: [manual_override_allowed, reason_comment_present]
+  required_artifact_types: [decision_memo]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Manual human gate without bypassing the validator.
+- rule_id: planned_to_rework_system_safety_stop
+  from_status: planned
+  to_status: rework
+  trigger_code: system_safety_stop
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [planning_defect_classified]
+  required_artifact_types: [rework_reason]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Planning discovered a material defect in the solution path.
+- rule_id: planned_to_blocked_system_block_detected
+  from_status: planned
+  to_status: blocked
+  trigger_code: system_block_detected
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [block_reason_present]
+  required_artifact_types: [block_record]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Planning cannot proceed because of an external blocker.
+- rule_id: ready_for_build_to_coding_system_build_started
+  from_status: ready_for_build
+  to_status: coding
+  trigger_code: system_build_started
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [readiness_report_exists, queue_slot_reserved, active_run_opened, runner_lease_granted, no_unresolved_blockers]
+  required_artifact_types: [execution_record]
+  artifact_scope: run
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: open
+  opened_run_kind: build
+  effect_on_lease: create
+  notes: Start the build loop with an open run and active lease.
+- rule_id: ready_for_build_to_blocked_system_block_detected
+  from_status: ready_for_build
+  to_status: blocked
+  trigger_code: system_block_detected
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [block_reason_present]
+  required_artifact_types: [block_record]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Block the issue before execution starts.
+- rule_id: ready_for_build_to_needs_input_system_input_required
+  from_status: ready_for_build
+  to_status: needs_input
+  trigger_code: system_input_required
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [structured_question_prepared, missing_input_discovered]
+  required_artifact_types: [operator_question]
+  artifact_scope: operator_question
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Readiness found a blocking missing input.
+- rule_id: coding_to_agent_review_system_build_finished
+  from_status: coding
+  to_status: agent_review
+  trigger_code: system_build_finished
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [build_report_present, changeset_persisted]
+  required_artifact_types: [build_report]
+  artifact_scope: run
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: release
+  notes: Move from build execution into independent review.
+- rule_id: coding_to_needs_input_system_input_required
+  from_status: coding
+  to_status: needs_input
+  trigger_code: system_input_required
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [checkpoint_persisted, structured_question_prepared]
+  required_artifact_types: [operator_question, checkpoint_record]
+  artifact_scope: run
+  requires_reason_code: false
+  requires_checkpoint: true
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: suspend
+  notes: Pause the active run while waiting for new input.
+- rule_id: coding_to_rework_system_safety_stop
+  from_status: coding
+  to_status: rework
+  trigger_code: system_safety_stop
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [solution_classified_fundamentally_wrong]
+  required_artifact_types: [rework_reason]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: close_aborted
+  effect_on_lease: release
+  notes: Abort the current run because the solution path is invalid.
+- rule_id: coding_to_needs_human_decision_system_human_gate_required
+  from_status: coding
+  to_status: needs_human_decision
+  trigger_code: system_human_gate_required
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [decision_memo_prepared]
+  required_artifact_types: [decision_memo]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: suspend
+  notes: Escalate the active run to a human decision gate.
+- rule_id: coding_to_needs_human_decision_human_status_change
+  from_status: coding
+  to_status: needs_human_decision
+  trigger_code: human_status_change
+  owner_role: human
+  allowed_actor_types: [human]
+  guard_conditions: [manual_override_allowed, reason_comment_present]
+  required_artifact_types: [decision_memo]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: suspend
+  notes: Manual human-gate override during coding.
+- rule_id: coding_to_blocked_system_block_detected
+  from_status: coding
+  to_status: blocked
+  trigger_code: system_block_detected
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [checkpoint_persisted, block_reason_present]
+  required_artifact_types: [block_record, checkpoint_record]
+  artifact_scope: run
+  requires_reason_code: true
+  requires_checkpoint: true
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: suspend
+  notes: Preserve restartability before blocking an active run.
+- rule_id: agent_review_to_coding_system_review_finished
+  from_status: agent_review
+  to_status: coding
+  trigger_code: system_review_finished
+  owner_role: review_agent
+  allowed_actor_types: [system]
+  guard_conditions: [findings_fixable_in_current_solution_path]
+  required_artifact_types: [review_report]
+  artifact_scope: run
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: create
+  notes: Review returned fixable findings to the build loop.
+- rule_id: agent_review_to_needs_input_system_input_required
+  from_status: agent_review
+  to_status: needs_input
+  trigger_code: system_input_required
+  owner_role: review_agent
+  allowed_actor_types: [system]
+  guard_conditions: [missing_evidence_or_access, structured_question_prepared]
+  required_artifact_types: [operator_question]
+  artifact_scope: operator_question
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Review needs new human input to proceed.
+- rule_id: agent_review_to_needs_human_decision_system_human_gate_required
+  from_status: agent_review
+  to_status: needs_human_decision
+  trigger_code: system_human_gate_required
+  owner_role: review_agent
+  allowed_actor_types: [system]
+  guard_conditions: [review_complete, human_decision_required]
+  required_artifact_types: [decision_summary, review_report]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Review is complete and the workflow waits for a human gate.
+- rule_id: agent_review_to_rework_system_review_finished
+  from_status: agent_review
+  to_status: rework
+  trigger_code: system_review_finished
+  owner_role: review_agent
+  allowed_actor_types: [system]
+  guard_conditions: [findings_show_defect_in_approach]
+  required_artifact_types: [rework_reason]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: close_aborted
+  effect_on_lease: none
+  notes: Review found a fundamental issue that requires rework.
+- rule_id: agent_review_to_blocked_system_block_detected
+  from_status: agent_review
+  to_status: blocked
+  trigger_code: system_block_detected
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [block_reason_present]
+  required_artifact_types: [block_record]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Verification infrastructure or dependencies are blocked.
+- rule_id: needs_human_decision_to_ready_to_merge_human_decision_given
+  from_status: needs_human_decision
+  to_status: ready_to_merge
+  trigger_code: human_decision_given
+  owner_role: human
+  allowed_actor_types: [human]
+  guard_conditions: [approval_record_present, requested_human_gate_satisfied]
+  required_artifact_types: [approval_record]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: true
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Human approval closes the gate and allows merge.
+- rule_id: needs_human_decision_to_rework_human_decision_given
+  from_status: needs_human_decision
+  to_status: rework
+  trigger_code: human_decision_given
+  owner_role: human
+  allowed_actor_types: [human]
+  guard_conditions: [rework_instruction_present]
+  required_artifact_types: [rework_instruction]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: true
+  effect_on_run: close_aborted
+  effect_on_lease: none
+  notes: Human explicitly requested rework.
+- rule_id: needs_human_decision_to_needs_input_system_input_required
+  from_status: needs_human_decision
+  to_status: needs_input
+  trigger_code: system_input_required
+  owner_role: reporter_agent
+  allowed_actor_types: [system]
+  guard_conditions: [human_decision_created_new_operator_question]
+  required_artifact_types: [operator_question]
+  artifact_scope: operator_question
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Human gate feedback generated a new structured question.
+- rule_id: needs_human_decision_to_canceled_human_cancel
+  from_status: needs_human_decision
+  to_status: canceled
+  trigger_code: human_cancel
+  owner_role: human
+  allowed_actor_types: [human]
+  guard_conditions: [cancel_reason_present]
+  required_artifact_types: [cancel_reason]
+  artifact_scope: transition
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: true
+  effect_on_run: close_aborted
+  effect_on_lease: none
+  notes: Terminal cancellation after the human gate opened.
+- rule_id: ready_to_merge_to_deploying_system_deploy_started
+  from_status: ready_to_merge
+  to_status: deploying
+  trigger_code: system_deploy_started
+  owner_role: release_agent
+  allowed_actor_types: [system]
+  guard_conditions: [deploy_required, approvals_exist, checks_green, merge_record_opened]
+  required_artifact_types: [merge_deploy_record]
+  artifact_scope: run
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Start merge or deploy work when the path requires it.
+- rule_id: ready_to_merge_to_done_human_decision_given
+  from_status: ready_to_merge
+  to_status: done
+  trigger_code: human_decision_given
+  owner_role: human
+  allowed_actor_types: [human]
+  guard_conditions: [no_merge_or_deploy_surface, completion_record_present]
+  required_artifact_types: [completion_record]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: true
+  effect_on_run: close_success
+  effect_on_lease: none
+  notes: Close issues that do not require merge or deploy.
+- rule_id: ready_to_merge_to_rework_system_safety_stop
+  from_status: ready_to_merge
+  to_status: rework
+  trigger_code: system_safety_stop
+  owner_role: release_agent
+  allowed_actor_types: [system]
+  guard_conditions: [merge_gate_failed_or_new_defect_found]
+  required_artifact_types: [rework_reason]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: close_aborted
+  effect_on_lease: none
+  notes: Merge gate failed and the issue must re-enter rework.
+- rule_id: deploying_to_monitoring_system_deploy_finished
+  from_status: deploying
+  to_status: monitoring
+  trigger_code: system_deploy_finished
+  owner_role: release_agent
+  allowed_actor_types: [system]
+  guard_conditions: [smoke_result_present, deployment_identifiers_persisted]
+  required_artifact_types: [deploy_summary, smoke_result]
+  artifact_scope: run
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Rollout finished and the monitoring window begins.
+- rule_id: deploying_to_rework_system_safety_stop
+  from_status: deploying
+  to_status: rework
+  trigger_code: system_safety_stop
+  owner_role: release_agent
+  allowed_actor_types: [system]
+  guard_conditions: [deployment_failure_classified_as_rework]
+  required_artifact_types: [failure_summary]
+  artifact_scope: run
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: close_aborted
+  effect_on_lease: none
+  notes: Rollout failure requires a new implementation cycle.
+- rule_id: deploying_to_needs_human_decision_system_human_gate_required
+  from_status: deploying
+  to_status: needs_human_decision
+  trigger_code: system_human_gate_required
+  owner_role: release_agent
+  allowed_actor_types: [system]
+  guard_conditions: [escalation_memo_prepared]
+  required_artifact_types: [escalation_memo]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Rollout needs a manual human decision.
+- rule_id: monitoring_to_done_system_monitoring_passed
+  from_status: monitoring
+  to_status: done
+  trigger_code: system_monitoring_passed
+  owner_role: monitoring_agent
+  allowed_actor_types: [system]
+  guard_conditions: [monitoring_window_elapsed, no_unresolved_incident_signal]
+  required_artifact_types: [monitoring_summary]
+  artifact_scope: run
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: close_success
+  effect_on_lease: none
+  notes: Monitoring passed and the issue is complete.
+- rule_id: monitoring_to_rework_system_safety_stop
+  from_status: monitoring
+  to_status: rework
+  trigger_code: system_safety_stop
+  owner_role: monitoring_agent
+  allowed_actor_types: [system]
+  guard_conditions: [incident_classified_as_rework]
+  required_artifact_types: [incident_rework_summary]
+  artifact_scope: run
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: close_aborted
+  effect_on_lease: none
+  notes: Monitoring found a regression or incident.
+- rule_id: monitoring_to_needs_human_decision_system_human_gate_required
+  from_status: monitoring
+  to_status: needs_human_decision
+  trigger_code: system_human_gate_required
+  owner_role: monitoring_agent
+  allowed_actor_types: [system]
+  guard_conditions: [escalation_memo_prepared]
+  required_artifact_types: [escalation_memo]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Monitoring requires a human interpretation or decision.
+- rule_id: blocked_to_ready_for_build_system_block_cleared
+  from_status: blocked
+  to_status: ready_for_build
+  trigger_code: system_block_cleared
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [no_checkpoint_resume_required, blocker_cleared]
+  required_artifact_types: [unblock_record]
+  artifact_scope: issue
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Return to execution readiness without resuming a checkpoint.
+- rule_id: blocked_to_planned_system_block_cleared
+  from_status: blocked
+  to_status: planned
+  trigger_code: system_block_cleared
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [blocker_cleared, suspended_from_status_matches_planned]
+  required_artifact_types: [unblock_record]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Return to planning when the blocked issue was suspended from planned.
+- rule_id: blocked_to_coding_system_block_cleared
+  from_status: blocked
+  to_status: coding
+  trigger_code: system_block_cleared
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [checkpoint_exists, safe_resume_confirmed, lease_restore_possible]
+  required_artifact_types: [checkpoint_resume_record]
+  artifact_scope: run
+  requires_reason_code: false
+  requires_checkpoint: true
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: resume
+  effect_on_lease: restore
+  notes: Resume execution directly from a checkpointed blocked state.
+- rule_id: blocked_to_agent_review_system_block_cleared
+  from_status: blocked
+  to_status: agent_review
+  trigger_code: system_block_cleared
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [blocker_cleared, suspended_from_status_matches_agent_review]
+  required_artifact_types: [unblock_record]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: true
+  requires_human_approval: false
+  effect_on_run: continue
+  effect_on_lease: none
+  notes: Resume the review lane when the blocker was external to verification.
+- rule_id: blocked_to_needs_human_decision_system_block_cleared
+  from_status: blocked
+  to_status: needs_human_decision
+  trigger_code: system_block_cleared
+  owner_role: orchestrator
+  allowed_actor_types: [system]
+  guard_conditions: [blocker_cleared, suspended_from_status_matches_needs_human_decision]
+  required_artifact_types: [unblock_record]
+  artifact_scope: issue
+  requires_reason_code: false
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: none
+  effect_on_lease: none
+  notes: Return to the distinct human-decision gate when the blocked issue was suspended there.
+- rule_id: blocked_to_canceled_human_cancel
+  from_status: blocked
+  to_status: canceled
+  trigger_code: human_cancel
+  owner_role: human
+  allowed_actor_types: [human]
+  guard_conditions: [cancel_reason_present]
+  required_artifact_types: [cancel_reason]
+  artifact_scope: transition
+  requires_reason_code: true
+  requires_checkpoint: false
+  requires_active_run: false
+  requires_human_approval: false
+  effect_on_run: close_aborted
+  effect_on_lease: release
+  notes: Terminal cancellation while blocked.

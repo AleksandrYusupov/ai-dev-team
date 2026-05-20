@@ -1,0 +1,53 @@
+{
+  "id": "S14",
+  "version": "v1",
+  "name": "Backend Implementation Pack",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Глубокие правила backend-кодинга: API contracts, services, validation, logging, idempotency, error handling, telemetry, feature flags.",
+    "Seed rationale: Основной domain skill для BackendBuildAgent."
+  ],
+  "inputs": [
+    "Нужно адаптировать под стек каждого repo: language, framework, lint/test/build, package manager, persistence layer."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Глубокие правила backend-кодинга: API contracts, services, validation, logging, idempotency, error handling, telemetry, feature flags.",
+  "why": "Основной domain skill для BackendBuildAgent.",
+  "download_ref": null,
+  "build_spec": "Нужно адаптировать под стек каждого repo: language, framework, lint/test/build, package manager, persistence layer.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S14",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

@@ -1,0 +1,35 @@
+pack_id: architecture_decision_core
+version: v1
+purpose: Готовит архитектурные решения и ADR для risky/cross-cutting work.
+skill_refs:
+- F02
+- F06
+- F07
+- F10
+- F13
+- S09
+- S10
+- S11
+optional_skill_refs:
+- R01
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - planned
+  - needs_human_decision
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - architecture_sign_off
+  notes: High-risk or cross-cutting design choices require human architecture sign-off.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A04
+- config/workflow/runtime_role_contracts.yaml#architect_agent

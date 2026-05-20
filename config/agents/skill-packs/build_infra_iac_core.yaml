@@ -1,0 +1,38 @@
+pack_id: build_infra_iac_core
+version: v1
+purpose: Меняет infrastructure-as-code, CI/CD и environment configs по golden path.
+skill_refs:
+- F03
+- F04
+- F05
+- F07
+- F08
+- F13
+- S17
+- S27
+- S37
+optional_skill_refs: []
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - coding
+  - ready_to_merge
+  - deploying
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - architecture_sign_off
+  - final_review_merge
+  - protected_deploy
+  notes: Infrastructure and CI/CD changes must stop at protected environment gates.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A10
+- config/workflow/runtime_role_contracts.yaml#build_agent_infra_iac

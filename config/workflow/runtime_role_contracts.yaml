@@ -1,0 +1,625 @@
+- role_id: orchestrator
+  canonical_run_kind: null
+  allowed_status_ownership:
+    - planned
+    - ready_for_build
+    - coding
+    - agent_review
+    - blocked
+    - needs_input
+    - needs_human_decision
+    - rework
+  required_input_artifact_types:
+    - plan_artifact
+    - readiness_report
+    - review_report
+    - decision_summary
+  required_output_artifact_types:
+    - runner_requirement_profile
+    - block_record
+    - resume_condition
+    - decision_summary
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - product_intent
+      - architecture_sign_off
+      - final_review_merge
+      - protected_deploy
+      - credential_ownership_vendor_console_actions
+    notes: Enforces canonical human-owned zones and pause/resume gates.
+  escalation_reason_codes:
+    - block_runner_outage
+    - blocked_ci_outage
+    - blocked_dependency_pending
+    - blocked_waiting_external_merge
+    - needs_business_decision
+    - needs_scope_clarification
+  activation_mode: active
+
+- role_id: intake_agent
+  canonical_run_kind: null
+  allowed_status_ownership:
+    - triage
+  required_input_artifact_types: []
+  required_output_artifact_types:
+    - intake_summary
+    - repo_mapping_result
+    - duplicate_link
+    - operator_question
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - product_intent
+    notes: Escalates ambiguous intent and low-confidence routing.
+  escalation_reason_codes:
+    - needs_business_decision
+    - needs_missing_file
+    - needs_scope_clarification
+    - integration_missing_credentials
+    - integration_vendor_console_required
+  activation_mode: active
+
+- role_id: context_agent
+  canonical_run_kind: null
+  allowed_status_ownership:
+    - triage
+    - needs_spec
+    - planned
+    - ready_for_build
+  required_input_artifact_types:
+    - intake_summary
+    - repo_mapping_result
+  required_output_artifact_types:
+    - context_pack
+    - decision_summary
+  human_gate_policy:
+    mode: none
+    required_human_owned_zones: []
+    notes: Only escalates when source-of-truth inputs conflict or are missing.
+  escalation_reason_codes:
+    - needs_missing_file
+    - blocked_dependency_pending
+  activation_mode: defined_only
+
+- role_id: spec_agent
+  canonical_run_kind: null
+  allowed_status_ownership:
+    - needs_spec
+  required_input_artifact_types:
+    - intake_summary
+    - context_pack
+    - repo_mapping_result
+  required_output_artifact_types:
+    - issue_contract_draft
+    - issue_contract_snapshot
+    - missing_fields_report
+    - operator_question
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - product_intent
+    notes: Requires human clarification when intent or scope remains incomplete.
+  escalation_reason_codes:
+    - needs_business_decision
+    - needs_missing_file
+    - needs_scope_clarification
+  activation_mode: active
+
+- role_id: architect_agent
+  canonical_run_kind: null
+  allowed_status_ownership:
+    - planned
+    - needs_human_decision
+  required_input_artifact_types:
+    - issue_contract_snapshot
+    - context_pack
+    - plan_artifact
+  required_output_artifact_types:
+    - decision_memo
+    - adr_record
+    - impact_map
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - architecture_sign_off
+    notes: High-risk or cross-cutting design choices require human architecture sign-off.
+  escalation_reason_codes:
+    - needs_business_decision
+    - rework_spec_gap
+  activation_mode: active
+
+- role_id: plan_agent
+  canonical_run_kind: null
+  allowed_status_ownership:
+    - planned
+    - needs_input
+    - rework
+  required_input_artifact_types:
+    - issue_contract_snapshot
+    - context_pack
+  required_output_artifact_types:
+    - plan_artifact
+    - dependency_report
+    - readiness_report
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - product_intent
+      - architecture_sign_off
+    notes: Escalates when decomposition changes scope or depends on unresolved architecture.
+  escalation_reason_codes:
+    - needs_scope_clarification
+    - blocked_dependency_pending
+    - rework_spec_gap
+  activation_mode: active
+
+- role_id: integration_agent
+  canonical_run_kind: null
+  allowed_status_ownership:
+    - planned
+    - needs_input
+    - ready_for_build
+    - ready_to_merge
+  required_input_artifact_types:
+    - issue_contract_snapshot
+    - context_pack
+    - readiness_report
+  required_output_artifact_types:
+    - integration_brief
+    - auth_decision_record
+    - credential_request
+    - credential_validation_report
+    - oauth_consent_session
+    - webhook_contract
+    - webhook_validation_report
+    - integration_smoke_report
+    - integration_go_live_checklist
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - credential_ownership_vendor_console_actions
+      - protected_deploy
+    notes: Vendor-console actions, consent, scope approval, and go-live remain human-approved.
+  escalation_reason_codes:
+    - integration_missing_credentials
+    - integration_vendor_console_required
+    - needs_credential_upload
+    - needs_scope_approval
+    - needs_oauth_consent
+    - needs_redirect_uri_registration
+    - needs_webhook_registration
+    - needs_provider_console_action
+    - integration_invalid_scope
+    - integration_webhook_verification_failed
+    - integration_sandbox_unavailable
+    - integration_vendor_outage
+    - integration_rate_limit_lockout
+    - integration_broker_outage
+    - integration_token_expired_or_revoked
+    - rework_integration_readiness_gap
+  activation_mode: active
+
+- role_id: build_agent_backend
+  canonical_run_kind: build
+  allowed_status_ownership:
+    - coding
+  required_input_artifact_types:
+    - plan_artifact
+    - dependency_report
+    - readiness_report
+    - runner_requirement_profile
+  required_output_artifact_types:
+    - execution_record
+    - build_report
+    - branch_info
+    - artifact_bundle_links
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - final_review_merge
+    notes: Implementation hands off through review; it does not self-approve merge.
+  escalation_reason_codes:
+    - needs_missing_file
+    - needs_scope_clarification
+    - rework_spec_gap
+    - blocked_dependency_pending
+    - blocked_waiting_external_merge
+    - blocked_ci_outage
+    - block_runner_outage
+  activation_mode: defined_only
+
+- role_id: build_agent_integrations
+  canonical_run_kind: build
+  allowed_status_ownership:
+    - coding
+  required_input_artifact_types:
+    - plan_artifact
+    - integration_brief
+    - auth_decision_record
+    - webhook_contract
+    - runner_requirement_profile
+  required_output_artifact_types:
+    - execution_record
+    - build_report
+    - branch_info
+    - artifact_bundle_links
+    - integration_smoke_report
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - credential_ownership_vendor_console_actions
+      - final_review_merge
+    notes: Code execution must stay inside the readiness and auth boundary set by IntegrationAgent.
+  escalation_reason_codes:
+    - needs_scope_clarification
+    - rework_integration_readiness_gap
+    - integration_invalid_scope
+    - integration_webhook_verification_failed
+    - integration_sandbox_unavailable
+    - integration_vendor_outage
+    - integration_rate_limit_lockout
+    - integration_broker_outage
+    - integration_token_expired_or_revoked
+    - blocked_ci_outage
+    - block_runner_outage
+  activation_mode: defined_only
+
+- role_id: test_agent
+  canonical_run_kind: build
+  allowed_status_ownership:
+    - coding
+    - agent_review
+  required_input_artifact_types:
+    - execution_record
+    - build_report
+  required_output_artifact_types:
+    - verification_result
+    - test_plan
+    - gap_report
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - final_review_merge
+    notes: Escalates when verification coverage is insufficient for a safe merge decision.
+  escalation_reason_codes:
+    - rework_failed_review
+    - blocked_ci_outage
+    - blocked_dependency_pending
+    - block_runner_outage
+  activation_mode: defined_only
+
+- role_id: review_agent
+  canonical_run_kind: review
+  allowed_status_ownership:
+    - agent_review
+  required_input_artifact_types:
+    - build_report
+    - execution_record
+    - verification_result
+  required_output_artifact_types:
+    - review_report
+    - decision_summary
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - final_review_merge
+    notes: Independent AI review is required, but final merge remains human-owned.
+  escalation_reason_codes:
+    - rework_failed_review
+    - rework_spec_gap
+    - rework_integration_readiness_gap
+    - rework_human_feedback
+    - needs_business_decision
+  activation_mode: active
+
+- role_id: reporter_agent
+  canonical_run_kind: null
+  allowed_status_ownership:
+    - needs_human_decision
+    - needs_input
+    - done
+  required_input_artifact_types:
+    - decision_summary
+    - review_report
+    - final_summary
+  required_output_artifact_types:
+    - operator_question
+    - final_summary
+    - outcome_record
+  human_gate_policy:
+    mode: none
+    required_human_owned_zones: []
+    notes: Reporter writes human-facing summaries but does not make decisions.
+  escalation_reason_codes:
+    - needs_business_decision
+    - needs_missing_file
+    - needs_scope_clarification
+  activation_mode: active
+
+- role_id: build_agent_frontend
+  canonical_run_kind: build
+  allowed_status_ownership:
+    - coding
+  required_input_artifact_types:
+    - plan_artifact
+    - dependency_report
+    - readiness_report
+    - runner_requirement_profile
+  required_output_artifact_types:
+    - execution_record
+    - build_report
+    - branch_info
+    - artifact_bundle_links
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - final_review_merge
+    notes: Public-facing UX changes require review before merge.
+  escalation_reason_codes:
+    - needs_missing_file
+    - needs_scope_clarification
+    - rework_spec_gap
+    - blocked_dependency_pending
+    - blocked_waiting_external_merge
+    - blocked_ci_outage
+    - block_runner_outage
+  activation_mode: defined_only
+
+- role_id: security_agent
+  canonical_run_kind: review
+  allowed_status_ownership:
+    - agent_review
+    - ready_to_merge
+    - needs_human_decision
+  required_input_artifact_types:
+    - build_report
+    - review_report
+    - auth_decision_record
+  required_output_artifact_types:
+    - security_review_report
+    - risk_signoff_input
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - architecture_sign_off
+      - final_review_merge
+      - credential_ownership_vendor_console_actions
+    notes: Critical security, privacy, and auth-boundary findings require human action.
+  escalation_reason_codes:
+    - needs_business_decision
+    - needs_scope_approval
+    - integration_invalid_scope
+    - integration_webhook_verification_failed
+    - rework_failed_review
+  activation_mode: defined_only
+
+- role_id: docs_agent
+  canonical_run_kind: build
+  allowed_status_ownership:
+    - coding
+    - ready_to_merge
+  required_input_artifact_types:
+    - execution_record
+    - decision_summary
+  required_output_artifact_types:
+    - documentation_update_record
+    - runbook_update_record
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - final_review_merge
+    notes: Customer-facing or policy-critical docs still require human review.
+  escalation_reason_codes:
+    - needs_missing_file
+    - rework_human_feedback
+  activation_mode: defined_only
+
+- role_id: release_agent
+  canonical_run_kind: deploy
+  allowed_status_ownership:
+    - ready_to_merge
+    - deploying
+  required_input_artifact_types:
+    - review_report
+    - decision_summary
+    - approval_record
+  required_output_artifact_types:
+    - merge_gate_report
+    - deploy_record
+    - merge_deploy_record
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - final_review_merge
+      - protected_deploy
+    notes: Protected branches and deploy environments require explicit human approval.
+  escalation_reason_codes:
+    - needs_business_decision
+    - blocked_waiting_external_merge
+    - blocked_ci_outage
+    - rework_post_deploy_issue
+  activation_mode: active
+
+- role_id: monitoring_agent
+  canonical_run_kind: review
+  allowed_status_ownership:
+    - monitoring
+  required_input_artifact_types:
+    - deploy_record
+    - monitoring_window
+  required_output_artifact_types:
+    - monitoring_summary
+    - completion_record
+    - incident_rework_summary
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - protected_deploy
+    notes: Novel incidents and destructive mitigations escalate to human operators.
+  escalation_reason_codes:
+    - needs_business_decision
+    - rework_post_deploy_issue
+  activation_mode: active
+
+- role_id: build_agent_data_migration
+  canonical_run_kind: build
+  allowed_status_ownership:
+    - coding
+    - ready_to_merge
+  required_input_artifact_types:
+    - plan_artifact
+    - dependency_report
+    - readiness_report
+  required_output_artifact_types:
+    - execution_record
+    - migration_plan
+    - migration_verification_report
+    - rollback_notes
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - architecture_sign_off
+      - final_review_merge
+      - protected_deploy
+    notes: Data-shape changes require explicit human sign-off before merge or deploy.
+  escalation_reason_codes:
+    - needs_business_decision
+    - rework_spec_gap
+    - blocked_dependency_pending
+    - blocked_ci_outage
+    - block_runner_outage
+  activation_mode: defined_only
+
+- role_id: build_agent_infra_iac
+  canonical_run_kind: build
+  allowed_status_ownership:
+    - coding
+    - ready_to_merge
+    - deploying
+  required_input_artifact_types:
+    - plan_artifact
+    - dependency_report
+    - readiness_report
+    - runner_requirement_profile
+  required_output_artifact_types:
+    - execution_record
+    - infrastructure_plan
+    - rollout_notes
+    - rollback_notes
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - architecture_sign_off
+      - final_review_merge
+      - protected_deploy
+    notes: Infrastructure and CI/CD changes must stop at protected environment gates.
+  escalation_reason_codes:
+    - needs_business_decision
+    - blocked_ci_outage
+    - block_runner_outage
+    - blocked_dependency_pending
+    - rework_post_deploy_issue
+  activation_mode: defined_only
+
+- role_id: provisioner_agent
+  canonical_run_kind: build
+  allowed_status_ownership:
+    - triage
+    - planned
+    - ready_for_build
+  required_input_artifact_types:
+    - repo_mapping_result
+    - plan_artifact
+  required_output_artifact_types:
+    - provisioning_plan
+    - repo_scaffold_record
+    - registry_update_record
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - architecture_sign_off
+      - credential_ownership_vendor_console_actions
+      - protected_deploy
+    notes: Repo creation, environment access, and secret setup stay human-approved.
+  escalation_reason_codes:
+    - needs_business_decision
+    - blocked_dependency_pending
+    - block_runner_outage
+  activation_mode: defined_only
+
+- role_id: dependency_agent
+  canonical_run_kind: build
+  allowed_status_ownership:
+    - triage
+    - planned
+    - coding
+    - agent_review
+  required_input_artifact_types:
+    - dependency_report
+    - plan_artifact
+  required_output_artifact_types:
+    - dependency_update_report
+    - maintenance_pr_record
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - final_review_merge
+    notes: Major upgrades and supply-chain risk changes require review before landing.
+  escalation_reason_codes:
+    - needs_business_decision
+    - blocked_dependency_pending
+    - blocked_ci_outage
+  activation_mode: defined_only
+
+- role_id: evals_agent
+  canonical_run_kind: review
+  allowed_status_ownership:
+    - agent_review
+    - monitoring
+    - done
+  required_input_artifact_types:
+    - review_report
+    - monitoring_summary
+    - final_summary
+  required_output_artifact_types:
+    - benchmark_report
+    - quality_dashboard
+    - skill_change_recommendation
+  human_gate_policy:
+    mode: none
+    required_human_owned_zones: []
+    notes: Produces evaluation artifacts; humans decide whether to change org policy.
+  escalation_reason_codes:
+    - needs_business_decision
+    - rework_human_feedback
+  activation_mode: defined_only
+
+- role_id: build_agent
+  canonical_run_kind: build
+  allowed_status_ownership:
+    - coding
+  required_input_artifact_types:
+    - plan_artifact
+    - dependency_report
+    - readiness_report
+    - runner_requirement_profile
+  required_output_artifact_types:
+    - execution_record
+    - build_report
+    - branch_info
+    - artifact_bundle_links
+  human_gate_policy:
+    mode: conditional
+    required_human_owned_zones:
+      - final_review_merge
+    notes: Compatibility-only role kept until build-profile routing moves to first-class owner roles.
+  escalation_reason_codes:
+    - needs_missing_file
+    - needs_scope_clarification
+    - rework_spec_gap
+    - blocked_dependency_pending
+    - blocked_waiting_external_merge
+    - blocked_ci_outage
+    - block_runner_outage
+  activation_mode: compatibility_only

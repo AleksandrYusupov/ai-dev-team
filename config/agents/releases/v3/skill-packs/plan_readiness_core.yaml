@@ -1,0 +1,35 @@
+pack_id: plan_readiness_core
+version: v1
+purpose: Декомпозирует контракт на milestones/sub-issues и execution plan.
+skill_refs:
+- F01
+- F06
+- F10
+- F13
+- S12
+- S13
+optional_skill_refs:
+- R01
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - planned
+  - needs_input
+  - rework
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - product_intent
+  - architecture_sign_off
+  notes: Escalates when decomposition changes scope or depends on unresolved architecture.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A05
+- config/workflow/runtime_role_contracts.yaml#plan_agent

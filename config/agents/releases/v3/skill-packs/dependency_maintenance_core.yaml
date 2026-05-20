@@ -1,0 +1,33 @@
+pack_id: dependency_maintenance_core
+version: v1
+purpose: Измеряет качество агентов, skills и overall engineering system.
+skill_refs:
+- F12
+- S41
+- S42
+- S45
+optional_skill_refs:
+- R02
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - triage
+  - planned
+  - coding
+  - agent_review
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - final_review_merge
+  notes: Major upgrades and supply-chain risk changes require review before landing.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A19
+- config/workflow/runtime_role_contracts.yaml#dependency_agent

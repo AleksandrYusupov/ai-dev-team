@@ -1,0 +1,53 @@
+{
+  "id": "F02",
+  "version": "v1",
+  "name": "Context Pack Builder",
+  "category": "foundation",
+  "availability": "custom",
+  "kind": "foundation",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Собирает компактный контекст-пак из Obsidian, repo guidance, AGENTS.md/CLAUDE.md, linked docs, recent PRs, ADR, PLAN, SPEC, runbooks, project registry и, для integration-задач, sanitized integration artifact references.",
+    "Seed rationale: Лучшие агентные пайплайны побеждают не моделью, а качеством контекста."
+  ],
+  "inputs": [
+    "Должен уметь дедуплицировать контекст, выделять authoritative sources, собирать last relevant comments, decisions summary и отдельно формировать slim prompt context vs full raw log. Для integration-задач включать только sanitized integration artifact refs; не включать raw secrets, raw token state или raw vendor docs dumps."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Собирает компактный контекст-пак из Obsidian, repo guidance, AGENTS.md/CLAUDE.md, linked docs, recent PRs, ADR, PLAN, SPEC, runbooks, project registry и, для integration-задач, sanitized integration artifact references.",
+  "why": "Лучшие агентные пайплайны побеждают не моделью, а качеством контекста.",
+  "download_ref": null,
+  "build_spec": "Должен уметь дедуплицировать контекст, выделять authoritative sources, собирать last relevant comments, decisions summary и отдельно формировать slim prompt context vs full raw log. Для integration-задач включать только sanitized integration artifact refs; не включать raw secrets, raw token state или raw vendor docs dumps.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/F02",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

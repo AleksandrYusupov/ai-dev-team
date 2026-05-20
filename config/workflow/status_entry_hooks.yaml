@@ -1,0 +1,455 @@
+- status_code: triage
+  hook_order: 10
+  hook_type: validation
+  hook_name: validate_intake_template_completeness
+  owner_role: intake_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: block_transition
+  produces_artifact_type: intake_summary
+  emits_command_type:
+  notes: Validate the initial issue payload and normalize intake metadata.
+
+- status_code: triage
+  hook_order: 20
+  hook_type: artifact_generation
+  hook_name: generate_repo_mapping_result
+  owner_role: intake_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: block_transition
+  produces_artifact_type: repo_mapping_result
+  emits_command_type:
+  notes: Resolve project to repository mapping and persist the intake snapshot.
+
+- status_code: triage
+  hook_order: 30
+  hook_type: command_enqueue
+  hook_name: enqueue_intake_runner_lease_request
+  owner_role: intake_agent
+  target_owner_role: intake_agent
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type:
+  emits_command_type: create_runner_lease
+  notes: Create a runner lease so intake_agent can perform triage and decide the next transition.
+
+- status_code: needs_spec
+  hook_order: 10
+  hook_type: artifact_generation
+  hook_name: generate_context_pack
+  owner_role: context_agent
+  target_owner_role: context_agent
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: context_pack
+  emits_command_type: create_runner_lease
+  notes: Create a runner lease so context_agent assembles a full context pack before spec drafting starts.
+
+- status_code: needs_spec
+  hook_order: 20
+  hook_type: artifact_generation
+  hook_name: generate_issue_contract_draft
+  owner_role: spec_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: issue_contract_draft
+  emits_command_type:
+  notes: Build or update the draft issue contract.
+
+- status_code: needs_spec
+  hook_order: 30
+  hook_type: validation
+  hook_name: validate_missing_contract_fields
+  owner_role: spec_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: block_transition
+  produces_artifact_type: missing_fields_report
+  emits_command_type:
+  notes: Persist the set of missing contract fields.
+
+- status_code: needs_spec
+  hook_order: 40
+  hook_type: command_enqueue
+  hook_name: enqueue_spec_runner_lease_request
+  owner_role: spec_agent
+  target_owner_role: spec_agent
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type:
+  emits_command_type: create_runner_lease
+  notes: Create a runner lease so spec_agent can build the issue contract and decide the next transition.
+
+- status_code: needs_input
+  hook_order: 10
+  hook_type: artifact_generation
+  hook_name: generate_operator_question
+  owner_role: reporter_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: block_transition
+  produces_artifact_type: operator_question
+  emits_command_type:
+  notes: Persist the one structured operator question for the issue.
+
+- status_code: needs_input
+  hook_order: 20
+  hook_type: command_enqueue
+  hook_name: enqueue_structured_question_comment
+  owner_role: reporter_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type:
+  emits_command_type: post_linear_comment
+  notes: Enqueue the human-facing question after commit.
+
+- status_code: planned
+  hook_order: 10
+  hook_type: artifact_generation
+  hook_name: generate_context_pack
+  owner_role: context_agent
+  target_owner_role: context_agent
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: context_pack
+  emits_command_type: create_runner_lease
+  notes: Create a runner lease so context_agent refreshes the context pack before planning and decomposition.
+
+- status_code: planned
+  hook_order: 20
+  hook_type: artifact_generation
+  hook_name: generate_plan_artifact
+  owner_role: plan_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: plan_artifact
+  emits_command_type:
+  notes: Persist the execution plan.
+
+- status_code: planned
+  hook_order: 30
+  hook_type: artifact_generation
+  hook_name: generate_dependency_report
+  owner_role: plan_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: dependency_report
+  emits_command_type:
+  notes: Persist dependency and blocker validation results.
+
+- status_code: planned
+  hook_order: 40
+  hook_type: artifact_generation
+  hook_name: generate_integration_brief
+  owner_role: integration_agent
+  target_owner_role:
+  is_required: false
+  failure_mode: warn_only
+  produces_artifact_type: integration_brief
+  emits_command_type:
+  notes: Draft the integration brief for integration-heavy routes.
+
+- status_code: planned
+  hook_order: 50
+  hook_type: artifact_generation
+  hook_name: generate_auth_decision_record
+  owner_role: integration_agent
+  target_owner_role:
+  is_required: false
+  failure_mode: warn_only
+  produces_artifact_type: auth_decision_record
+  emits_command_type:
+  notes: Capture auth and secret-boundary decisions before readiness.
+
+- status_code: planned
+  hook_order: 60
+  hook_type: command_enqueue
+  hook_name: enqueue_plan_runner_lease_request
+  owner_role: plan_agent
+  target_owner_role: plan_agent
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type:
+  emits_command_type: create_runner_lease
+  notes: Create a runner lease so plan_agent can perform readiness check and route to ready_for_build.
+
+- status_code: ready_for_build
+  hook_order: 10
+  hook_type: artifact_generation
+  hook_name: generate_context_pack
+  owner_role: context_agent
+  target_owner_role: context_agent
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: context_pack
+  emits_command_type: create_runner_lease
+  notes: Create a runner lease so context_agent freezes the final context pack for execution.
+
+- status_code: ready_for_build
+  hook_order: 20
+  hook_type: validation
+  hook_name: validate_readiness_checklist
+  owner_role: integration_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: block_transition
+  produces_artifact_type: readiness_report
+  emits_command_type:
+  notes: Validate readiness and integration prerequisites before lease creation.
+
+- status_code: ready_for_build
+  hook_order: 30
+  hook_type: artifact_generation
+  hook_name: generate_runner_requirement_profile
+  owner_role: orchestrator
+  target_owner_role:
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: runner_requirement_profile
+  emits_command_type:
+  notes: Persist runner requirements including the resolved owner role and run kind.
+
+- status_code: ready_for_build
+  hook_order: 40
+  hook_type: command_enqueue
+  hook_name: enqueue_build_runner_lease_request
+  owner_role: orchestrator
+  target_owner_role: build_agent_backend
+  is_required: true
+  failure_mode: move_to_blocked
+  produces_artifact_type:
+  emits_command_type: create_runner_lease
+  notes: Persist the durable build lease intent; integration-heavy issues are upgraded to build_agent_integrations at runtime.
+
+- status_code: coding
+  hook_order: 10
+  hook_type: artifact_generation
+  hook_name: generate_documentation_update_record
+  owner_role: docs_agent
+  target_owner_role:
+  is_required: false
+  failure_mode: warn_only
+  produces_artifact_type: documentation_update_record
+  emits_command_type:
+  notes: Start the docs sync trail in parallel with implementation.
+
+- status_code: agent_review
+  hook_order: 10
+  hook_type: command_enqueue
+  hook_name: enqueue_test_runner_lease_request
+  owner_role: orchestrator
+  target_owner_role: test_agent
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type:
+  emits_command_type: create_runner_lease
+  notes: Start the verification pass when the build hands off into review.
+
+- status_code: agent_review
+  hook_order: 20
+  hook_type: command_enqueue
+  hook_name: enqueue_build_runner_lease_release
+  owner_role: orchestrator
+  target_owner_role: build_agent_backend
+  is_required: false
+  failure_mode: warn_only
+  produces_artifact_type:
+  emits_command_type: release_runner_lease
+  notes: Release the active build lease after the handoff into agent review; integration builds resolve to build_agent_integrations at runtime.
+
+- status_code: blocked
+  hook_order: 10
+  hook_type: artifact_generation
+  hook_name: generate_block_record
+  owner_role: orchestrator
+  target_owner_role:
+  is_required: true
+  failure_mode: block_transition
+  produces_artifact_type: block_record
+  emits_command_type:
+  notes: Persist the block reason, related issue links, and blocker metadata.
+
+- status_code: blocked
+  hook_order: 20
+  hook_type: artifact_generation
+  hook_name: generate_resume_condition
+  owner_role: orchestrator
+  target_owner_role:
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: resume_condition
+  emits_command_type:
+  notes: Persist the durable resume metadata including suspended_from_status semantics.
+
+- status_code: blocked
+  hook_order: 30
+  hook_type: command_enqueue
+  hook_name: enqueue_runner_lease_release
+  owner_role: orchestrator
+  target_owner_role: build_agent_backend
+  is_required: false
+  failure_mode: warn_only
+  produces_artifact_type:
+  emits_command_type: release_runner_lease
+  notes: Release or suspend the active lease after commit; integration builds resolve to build_agent_integrations at runtime.
+
+- status_code: needs_human_decision
+  hook_order: 10
+  hook_type: artifact_generation
+  hook_name: generate_decision_summary
+  owner_role: reporter_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: decision_summary
+  emits_command_type:
+  notes: Summarize what was done, what is blocked, and what the human must decide.
+
+- status_code: needs_human_decision
+  hook_order: 20
+  hook_type: command_enqueue
+  hook_name: enqueue_human_gate_comment
+  owner_role: reporter_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type:
+  emits_command_type: post_linear_comment
+  notes: Post the human-facing decision summary after commit.
+
+- status_code: ready_to_merge
+  hook_order: 10
+  hook_type: validation
+  hook_name: validate_merge_gate
+  owner_role: release_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: block_transition
+  produces_artifact_type: merge_gate_report
+  emits_command_type:
+  notes: Validate merge gates and release constraints.
+
+- status_code: ready_to_merge
+  hook_order: 20
+  hook_type: artifact_generation
+  hook_name: generate_runbook_update_record
+  owner_role: docs_agent
+  target_owner_role:
+  is_required: false
+  failure_mode: warn_only
+  produces_artifact_type: runbook_update_record
+  emits_command_type:
+  notes: Persist the runbook update trail before merge or release.
+
+- status_code: ready_to_merge
+  hook_order: 30
+  hook_type: artifact_generation
+  hook_name: generate_documentation_update_record
+  owner_role: docs_agent
+  target_owner_role:
+  is_required: false
+  failure_mode: warn_only
+  produces_artifact_type: documentation_update_record
+  emits_command_type:
+  notes: Persist customer-facing documentation updates before merge or release.
+
+- status_code: ready_to_merge
+  hook_order: 40
+  hook_type: artifact_generation
+  hook_name: generate_integration_go_live_checklist
+  owner_role: integration_agent
+  target_owner_role:
+  is_required: false
+  failure_mode: warn_only
+  produces_artifact_type: integration_go_live_checklist
+  emits_command_type:
+  notes: Validate the go-live checklist for integration-heavy changes before merge or deploy.
+
+- status_code: ready_to_merge
+  hook_order: 50
+  hook_type: command_enqueue
+  hook_name: enqueue_release_runner_lease_request
+  owner_role: release_agent
+  target_owner_role: release_agent
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type:
+  emits_command_type: create_runner_lease
+  notes: Create a runner lease so release_agent can validate merge gates and trigger deploy.
+
+- status_code: deploying
+  hook_order: 10
+  hook_type: command_enqueue
+  hook_name: enqueue_deploy_flow
+  owner_role: release_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: deploy_record
+  emits_command_type: post_linear_comment
+  notes: Placeholder deploy command until external adapters land.
+
+- status_code: deploying
+  hook_order: 20
+  hook_type: command_enqueue
+  hook_name: enqueue_deploy_runner_lease_request
+  owner_role: release_agent
+  target_owner_role: release_agent
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type:
+  emits_command_type: create_runner_lease
+  notes: Create a runner lease so release_agent can execute the deploy flow.
+
+- status_code: monitoring
+  hook_order: 10
+  hook_type: command_enqueue
+  hook_name: enqueue_monitoring_runner_lease_request
+  owner_role: monitoring_agent
+  target_owner_role: monitoring_agent
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type:
+  emits_command_type: create_runner_lease
+  notes: Create a runner lease so monitoring_agent can observe post-deploy health.
+
+- status_code: monitoring
+  hook_order: 20
+  hook_type: artifact_generation
+  hook_name: generate_monitoring_window
+  owner_role: monitoring_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: retry
+  produces_artifact_type: monitoring_window
+  emits_command_type:
+  notes: Persist the monitoring window metadata and health summary linkage.
+
+- status_code: done
+  hook_order: 10
+  hook_type: artifact_generation
+  hook_name: generate_final_summary
+  owner_role: reporter_agent
+  target_owner_role:
+  is_required: true
+  failure_mode: warn_only
+  produces_artifact_type: final_summary
+  emits_command_type:
+  notes: Persist the final issue summary and outcome record.
+
+- status_code: done
+  hook_order: 20
+  hook_type: command_enqueue
+  hook_name: enqueue_final_summary_comment
+  owner_role: reporter_agent
+  target_owner_role:
+  is_required: false
+  failure_mode: warn_only
+  produces_artifact_type:
+  emits_command_type: post_linear_comment
+  notes: Emit the final operator-facing summary after commit.

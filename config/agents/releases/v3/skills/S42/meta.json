@@ -1,0 +1,53 @@
+{
+  "id": "S42",
+  "version": "v1",
+  "name": "DORA & SPACE Metrics Interpreter",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Считает и интерпретирует delivery + developer experience metrics: deployment frequency, lead time, change failure rate, MTTR, plus SPACE dimensions.",
+    "Seed rationale: Нужен для управления отделом, а не только отдельными задачами."
+  ],
+  "inputs": [
+    "Не сводить всё к одной цифре. Разделять outcome vs activity metrics."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Считает и интерпретирует delivery + developer experience metrics: deployment frequency, lead time, change failure rate, MTTR, plus SPACE dimensions.",
+  "why": "Нужен для управления отделом, а не только отдельными задачами.",
+  "download_ref": null,
+  "build_spec": "Не сводить всё к одной цифре. Разделять outcome vs activity metrics.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S42",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

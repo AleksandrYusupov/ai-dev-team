@@ -1,0 +1,176 @@
+- code: triage
+  label: Triage
+  group: backlog
+  kind: intake
+  is_terminal: false
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: true
+  sort_order: 10
+  description: New inbound task awaiting normalization and contract routing.
+- code: rework
+  label: Rework
+  group: backlog
+  kind: rework
+  is_terminal: false
+  manual_entry_allowed: true
+  manual_exit_allowed: true
+  requires_human: false
+  blocks_execution: true
+  sort_order: 20
+  description: Return lane for issues that need another implementation or specification pass.
+- code: needs_spec
+  label: Needs Spec
+  group: unstarted
+  kind: specification
+  is_terminal: false
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: true
+  sort_order: 30
+  description: The issue contract is incomplete and must be assembled before planning.
+- code: needs_input
+  label: Needs Input
+  group: unstarted
+  kind: waiting_input
+  is_terminal: false
+  manual_entry_allowed: true
+  manual_exit_allowed: true
+  requires_human: true
+  blocks_execution: true
+  sort_order: 40
+  description: Execution is paused pending a structured human answer or another approved human-owned prerequisite.
+- code: planned
+  label: Planned
+  group: unstarted
+  kind: planned
+  is_terminal: false
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: true
+  sort_order: 50
+  description: The contract is complete and execution planning is finished.
+- code: ready_for_build
+  label: Ready for Build
+  group: started
+  kind: ready
+  is_terminal: false
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: false
+  sort_order: 60
+  description: The issue passed readiness checks and may enter the build loop.
+- code: coding
+  label: Coding
+  group: started
+  kind: coding
+  is_terminal: false
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: false
+  sort_order: 70
+  description: The active build loop is running.
+- code: agent_review
+  label: Agent Review
+  group: started
+  kind: review
+  is_terminal: false
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: false
+  sort_order: 80
+  description: Independent review and verification are running.
+- code: blocked
+  label: Blocked
+  group: started
+  kind: blocked
+  is_terminal: false
+  manual_entry_allowed: false
+  manual_exit_allowed: true
+  requires_human: false
+  blocks_execution: true
+  sort_order: 90
+  description: First-class execution pause for technical or external blockers that are distinct from human-input gates.
+- code: needs_human_decision
+  label: Needs Human Decision
+  group: completed
+  kind: human_gate
+  is_terminal: false
+  manual_entry_allowed: true
+  manual_exit_allowed: true
+  requires_human: true
+  blocks_execution: true
+  sort_order: 100
+  description: Agent-side work is complete and a human decision gate is open; this is not a generic fallback for blocked execution.
+- code: ready_to_merge
+  label: Ready to Merge
+  group: completed
+  kind: merge_gate
+  is_terminal: false
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: false
+  sort_order: 110
+  description: Final pre-merge gate before deploy or completion.
+- code: deploying
+  label: Deploying
+  group: completed
+  kind: deploy
+  is_terminal: false
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: false
+  sort_order: 120
+  description: Merge or deployment is currently in progress.
+- code: monitoring
+  label: Monitoring
+  group: completed
+  kind: monitoring
+  is_terminal: false
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: false
+  sort_order: 130
+  description: Post-deploy monitoring window is active.
+- code: done
+  label: Done
+  group: completed
+  kind: done
+  is_terminal: true
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: false
+  sort_order: 140
+  description: The issue completed successfully.
+- code: canceled
+  label: Canceled
+  group: canceled
+  kind: canceled
+  is_terminal: true
+  manual_entry_allowed: true
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: true
+  sort_order: 150
+  description: The issue was explicitly canceled.
+- code: duplicate
+  label: Duplicate
+  group: canceled
+  kind: duplicate
+  is_terminal: true
+  manual_entry_allowed: false
+  manual_exit_allowed: false
+  requires_human: false
+  blocks_execution: true
+  sort_order: 160
+  description: The issue is superseded by a canonical duplicate.

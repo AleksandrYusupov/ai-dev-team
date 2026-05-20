@@ -1,0 +1,35 @@
+pack_id: context_curation_core
+version: v1
+purpose: Собирает authoritative context pack для остальных агентов.
+skill_refs:
+- F02
+- F03
+- F09
+- F10
+- F11
+- F13
+- S04
+- S05
+optional_skill_refs: []
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - triage
+  - needs_spec
+  - planned
+  - ready_for_build
+  task_types: []
+  requires_integration: false
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: false
+  zones: []
+  notes: Only escalates when source-of-truth inputs conflict or are missing.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A02
+- config/workflow/runtime_role_contracts.yaml#context_agent

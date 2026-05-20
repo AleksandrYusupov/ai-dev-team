@@ -1,0 +1,53 @@
+{
+  "id": "F08",
+  "version": "v1",
+  "name": "Secrets, Permissions & Safe Command Guard",
+  "category": "foundation",
+  "availability": "custom",
+  "kind": "foundation",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Контролирует, какие команды, токены, environments, MCP tools и file paths доступны агенту; запрещает опасные действия вне policy.",
+    "Seed rationale: Без этого автономия быстро превращается в безопасность на честном слове."
+  ],
+  "inputs": [
+    "Нужна allowlist/denylist модель по агентам и режимам (read-only, write, deploy, incident). Логировать каждую escalation и доступ к секретам. Для integration work различать docs_allowlist, sandbox_api_allowlist и release_broker_only; запрещать прямую работу с raw secrets вне broker boundary."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Контролирует, какие команды, токены, environments, MCP tools и file paths доступны агенту; запрещает опасные действия вне policy.",
+  "why": "Без этого автономия быстро превращается в безопасность на честном слове.",
+  "download_ref": null,
+  "build_spec": "Нужна allowlist/denylist модель по агентам и режимам (read-only, write, deploy, incident). Логировать каждую escalation и доступ к секретам. Для integration work различать docs_allowlist, sandbox_api_allowlist и release_broker_only; запрещать прямую работу с raw secrets вне broker boundary.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/F08",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

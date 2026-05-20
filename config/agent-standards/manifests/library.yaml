@@ -1,0 +1,74 @@
+standards_bundle_id: canonical-agent-standards
+version: v1
+owners:
+  - ai_dev_team/control-plane
+release_model: manifest_indexed
+source_refs:
+  - building_agents/rules_examples/README.md
+  - source/Маршруты в зависимости от разных задач.md
+  - config/workflow/operating_model.yaml
+  - config/agents/manifests/library.yaml
+documents:
+  - document_id: rulebook
+    title: Agentic Coding Rulebook
+    kind: core_policy
+    path: ../../../building_agents/rules_examples/01_AGENTIC_CODING_RULEBOOK.md
+    required: true
+  - document_id: checklists
+    title: Agentic Coding Checklists
+    kind: core_policy
+    path: ../../../building_agents/rules_examples/02_CHECKLISTS.md
+    required: true
+  - document_id: templates
+    title: Agentic Coding Templates
+    kind: authoring_kit
+    path: ../../../building_agents/rules_examples/03_TEMPLATES.md
+    required: true
+  - document_id: changelog_spec
+    title: Agent Change Log Template
+    kind: audit_spec
+    path: ../../../building_agents/rules_examples/04_AGENT_CHANGELOG.md
+    required: true
+  - document_id: context7_protocol
+    title: Context7 Protocol
+    kind: core_policy
+    path: ../../../building_agents/rules_examples/05_CONTEXT7_PROTOCOL.md
+    required: true
+  - document_id: obsidian_protocol
+    title: Obsidian Documentation Protocol
+    kind: core_policy
+    path: ../../../building_agents/rules_examples/06_OBSIDIAN_DOCS_PROTOCOL.md
+    required: true
+  - document_id: serena_protocol
+    title: Serena MCP Protocol
+    kind: core_policy
+    path: ../../../building_agents/rules_examples/07_SERENA_MCP_PROTOCOL.md
+    required: true
+  - document_id: sequential_thinking_protocol
+    title: Sequential Thinking Protocol
+    kind: core_policy
+    path: ../../../building_agents/rules_examples/08_SEQUENTIAL_THINKING_PROTOCOL.md
+    required: true
+required_document_ids:
+  - rulebook
+  - checklists
+  - templates
+  - changelog_spec
+  - context7_protocol
+  - obsidian_protocol
+  - serena_protocol
+  - sequential_thinking_protocol
+expected_document_count: 8
+expected_project_profile_count: 1
+project_profile_dir: project-profiles
+layering_policy_path: manifests/layering-policy.yaml
+versioning_policy:
+  release_id_pattern: ^v[1-9][0-9]*$
+  immutable_release_manifests: true
+  document_hash_required: true
+  silent_mutation_forbidden: true
+  next_release_must_be_monotonic: true
+release_policy:
+  published_release_required_for_rollout: true
+  release_manifest_is_authoritative: true
+  fingerprint_scoped_separately_from_runtime_library: true

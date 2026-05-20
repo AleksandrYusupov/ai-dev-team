@@ -1,0 +1,53 @@
+{
+  "id": "F10",
+  "version": "v1",
+  "name": "Repo/Project Registry Resolver",
+  "category": "foundation",
+  "availability": "custom",
+  "kind": "foundation",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Разрешает mapping issue/project/area -> primary_repo / affected_repos / service_dependencies / required_checks / environments.",
+    "Seed rationale: У тебя это ключевой слой для multi-repo маршрутизации."
+  ],
+  "inputs": [
+    "Опирается на Repository Registry. Умеет давать confidence и объяснение маршрутизации. Поддерживает repo_kind, environments, team_id, project_id."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Разрешает mapping issue/project/area -> primary_repo / affected_repos / service_dependencies / required_checks / environments.",
+  "why": "У тебя это ключевой слой для multi-repo маршрутизации.",
+  "download_ref": null,
+  "build_spec": "Опирается на Repository Registry. Умеет давать confidence и объяснение маршрутизации. Поддерживает repo_kind, environments, team_id, project_id.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/F10",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

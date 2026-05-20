@@ -1,0 +1,56 @@
+{
+  "id": "F03",
+  "version": "v1",
+  "name": "Repo Guidance Interpreter",
+  "category": "foundation",
+  "availability": "template",
+  "kind": "foundation",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Понимает и применяет AGENTS.md, CLAUDE.md, path-specific instructions, prompt files, repo-local conventions, build/test commands, code style и release rules.",
+    "Seed rationale: Агенты работают лучше, когда инструкции лежат рядом с кодом, а не только в голове команды."
+  ],
+  "inputs": [
+    "Нужно поддержать layered instructions: global -> org -> repo -> path-specific -> task-specific. Проверять конфликтующие правила и выдавать effective instructions."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Понимает и применяет AGENTS.md, CLAUDE.md, path-specific instructions, prompt files, repo-local conventions, build/test commands, code style и release rules.",
+  "why": "Агенты работают лучше, когда инструкции лежат рядом с кодом, а не только в голове команды.",
+  "download_ref": {
+    "title": "OpenAI AGENTS.md guide",
+    "url": "https://developers.openai.com/codex/guides/agents-md/"
+  },
+  "build_spec": "Нужно поддержать layered instructions: global -> org -> repo -> path-specific -> task-specific. Проверять конфликтующие правила и выдавать effective instructions.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/F03",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

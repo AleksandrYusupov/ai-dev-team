@@ -1,0 +1,22 @@
+{
+  "name": "@ai-dev-team/runner-host",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "compile": "rm -rf dist && tsc -b tsconfig.json --pretty false",
+    "build": "corepack pnpm run compile",
+    "typecheck": "tsc -p tsconfig.json --pretty false",
+    "dev:runner-host:codex": "corepack pnpm run compile && node dist/index.js --provider codex",
+    "dev:runner-host:claude": "corepack pnpm run compile && node dist/index.js --provider claude",
+    "dev:fake-runner": "corepack pnpm run compile && RUNNER_RUNTIME_MODE=fake node dist/index.js --local-smoke --provider fake",
+    "dev:fake-mcp": "corepack pnpm run compile && node dist/fake-mcp.js",
+    "test": "corepack pnpm run compile && node --test dist/*.test.js",
+    "test:phase6": "corepack pnpm run compile && node --test dist/*.test.js && node dist/smoke.js",
+    "smoke:phase6": "corepack pnpm run compile && node dist/smoke.js"
+  },
+  "dependencies": {
+    "@ai-dev-team/config": "workspace:*",
+    "@ai-dev-team/shared": "workspace:*"
+  }
+}

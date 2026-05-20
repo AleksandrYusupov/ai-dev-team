@@ -1,0 +1,53 @@
+{
+  "id": "S43",
+  "version": "v1",
+  "name": "Stakeholder Status Reporter",
+  "category": "custom",
+  "availability": "custom",
+  "kind": "custom",
+  "runtime_dependency": true,
+  "reference_only_default": false,
+  "provider_compatibility": [
+    "codex",
+    "claude"
+  ],
+  "required_tools": [],
+  "required_mcp": [],
+  "sensitivity_class": "standard",
+  "when_to_use": [
+    "Пишет summaries для founders/PMs/eng leads: что движется, где риск, что заблокировано, что требует решения.",
+    "Seed rationale: Основа ReporterAgent."
+  ],
+  "inputs": [
+    "Audience-aware tone; concise; always include next decision point."
+  ],
+  "steps": [
+    "TBD: convert the seed build spec into a stable step-by-step skill contract."
+  ],
+  "stop_conditions": [
+    "TBD: define success and stop boundaries before runtime consumption."
+  ],
+  "escalation_rules": [
+    "Escalate when the required source-of-truth inputs are missing, contradictory, or blocked by a human-owned zone."
+  ],
+  "anti_patterns": [
+    "Do not duplicate always-on repo guidance inside selective skills.",
+    "Do not silently widen role scope beyond the owning skill pack."
+  ],
+  "denied_actions": [
+    "Do not treat this skeleton metadata as runtime-ready execution logic before the later runtime-consumption blocks."
+  ],
+  "human_gate": {
+    "required": false,
+    "zones": [],
+    "notes": "TBD"
+  },
+  "description": "Пишет summaries для founders/PMs/eng leads: что движется, где риск, что заблокировано, что требует решения.",
+  "why": "Основа ReporterAgent.",
+  "download_ref": null,
+  "build_spec": "Audience-aware tone; concise; always include next decision point.",
+  "source_refs": [
+    "building_agents/ai_dept_agents_and_skills_manifest_v2.json#skills/S43",
+    "source/Маршруты в зависимости от разных задач.md#11"
+  ]
+}

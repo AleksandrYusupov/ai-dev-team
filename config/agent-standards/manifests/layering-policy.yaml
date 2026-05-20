@@ -1,0 +1,55 @@
+precedence_order:
+  - system
+  - project
+  - repository
+  - agent_runtime
+  - provider
+merge_rules:
+  lower_layer_cannot_relax_upper: true
+  additive_overlays_only: true
+  stricter_constraint_wins: true
+  unresolved_conflict_action: fail_closed
+multi_repo_policy:
+  load_project_profile_first: true
+  load_all_affected_repository_rules: true
+  primary_repo_resolution_order:
+    - issue_contract.primary_repo
+    - issue_contract.affected_repos
+    - repository_registry.primary_mapping
+  conflict_resolution: strictest_constraint_wins
+  missing_primary_repo_action: fail_closed
+knowledge_routing:
+  standards_documents_are_centralized: true
+  project_profile_required: true
+  repo_guidance_files:
+    - AGENTS.md
+    - CLAUDE.md
+    - PLAN.md
+    - TESTPLAN.md
+    - RELEASE.md
+  affected_repo_loading_mode: all_affected_repositories
+changelog_routing:
+  system_standards_changelog_path: config/agent-standards/CHANGELOG.md
+  project_changelog_mode: obsidian_note
+  project_changelog_profile_key: changelog_note
+  repository_changelog_filename: 04_AGENT_CHANGELOG.md
+  repository_code_change_log_required: true
+exception_policy:
+  default_behavior: fail_closed
+  exception_classes:
+    - legacy_repo_missing_repo_rules
+    - temporary_policy_override
+    - provider_specific_gap
+    - manual_operator_override
+  required_fields:
+    - exception_id
+    - reason
+    - scope
+    - approved_by
+    - expires_at
+  temporary_override_requires_human_approval: true
+  manual_override_requires_audit_entry: true
+cross_project_policy:
+  isolation_required: true
+  allow_cross_project_mix_only_when_registry_marks_multi_project: true
+  cross_project_default_action: reject_context_mix

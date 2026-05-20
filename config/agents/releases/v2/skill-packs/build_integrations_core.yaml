@@ -1,0 +1,39 @@
+pack_id: build_integrations_core
+version: v1
+purpose: Реализует adapter/client/webhook code внутри границ, заранее определённых IntegrationAgent и
+  Secrets/Auth plane.
+skill_refs:
+- F03
+- F04
+- F05
+- F07
+- F08
+- F13
+- S16
+- S27
+- S51
+- S54
+optional_skill_refs:
+- R06
+providers:
+- codex
+- claude
+activation_conditions:
+  statuses:
+  - coding
+  task_types:
+  - integration
+  requires_integration: true
+  notes: Skeleton activation metadata only; runtime enforcement lands in later blocks.
+denied_actions_overlay:
+- Do not inline always-on repo guidance into a role-specific pack.
+- Do not expand this pack into runtime consumption before Block 9.
+human_gate_overlay:
+  required: true
+  zones:
+  - credential_ownership_vendor_console_actions
+  - final_review_merge
+  notes: Code execution must stay inside the readiness and auth boundary set by IntegrationAgent.
+source_refs:
+- building_agents/ai_dept_agents_and_skills_manifest_v2.json#A08
+- config/workflow/runtime_role_contracts.yaml#build_agent_integrations

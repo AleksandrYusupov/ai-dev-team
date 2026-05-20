@@ -1,0 +1,61 @@
+project_id: ai_dev_team
+version: v1
+standards_bundle_ref: canonical-agent-standards/v1
+kb_root: ai_dev_team
+entry_note: ai_dev_team/00_overview
+changelog_note: ai_dev_team/implementation/14_layered_agent_instruction_system.md
+project_tag: ai_dev_team
+repos:
+  - repo_slug: ai_dev_team
+    mapping_role: primary
+    local_repo_path: .
+    repo_guidance_files:
+      - AGENTS.md
+      - PLAN.md
+      - TESTPLAN.md
+      - RELEASE.md
+      - ENVIRONMENT.md
+    repo_changelog_path: 04_AGENT_CHANGELOG.md
+repository_registry:
+  source_of_truth: postgres_phase4_registry
+  resolution_doc_ref: ai_dev_team/architecture/06_repository_registry_and_context_pack_spec
+  primary_repo_resolution_order:
+    - linear_issue_contract_snapshots.primary_repo
+    - project_repository_mappings.primary
+  affected_repo_resolution_order:
+    - linear_issue_contract_snapshots.affected_repos
+    - project_repository_mappings.affected
+cross_repo_routing:
+  load_project_profile_before_repo_rules: true
+  load_all_affected_repo_rules: true
+  conflict_resolution: strictest_constraint_wins
+  fail_when_primary_repo_missing: true
+  fail_when_repo_rules_missing: false
+default_tool_policy:
+  runtime_providers:
+    - codex
+    - claude
+  shared_mcp_refs:
+    - repo-registry-mcp
+    - knowledge-service-mcp
+    - artifact-registry-mcp
+    - comment-memory-mcp
+    - policy-guard-mcp
+  runner_distribution_ref: config/agents/releases
+escalation_owners:
+  product_intent: founder_or_product_owner
+  architecture_sign_off: engineering_lead
+  final_review_merge: code_owner
+  protected_deploy: release_owner
+  credential_ownership_vendor_console_actions: integration_owner
+human_gates:
+  - product_intent
+  - architecture_sign_off
+  - final_review_merge
+  - protected_deploy
+  - credential_ownership_vendor_console_actions
+naming_conventions:
+  root_folder_tag: ai_dev_team
+  root_note_ref: ai_dev_team/00_overview
+  repo_changelog_filename: 04_AGENT_CHANGELOG.md
+  standards_bundle_ref_format: canonical-agent-standards/<version>

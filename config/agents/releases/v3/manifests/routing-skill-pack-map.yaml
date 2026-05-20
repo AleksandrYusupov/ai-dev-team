@@ -1,0 +1,148 @@
+- rule_id: status_triage_needs_intake_pack
+  statuses:
+  - triage
+  triggers:
+  - user_create_issue
+  - system_rework_routed
+  task_types: []
+  requires_integration: null
+  add_skill_pack_refs:
+  - intake_triage_core
+  notes: Ensures intake classification remains attached to triage and rework re-entry.
+- rule_id: status_needs_spec_requires_spec_pack
+  statuses:
+  - needs_spec
+  triggers:
+  - system_intake_complete
+  - human_input_received
+  task_types: []
+  requires_integration: null
+  add_skill_pack_refs:
+  - spec_contract_core
+  notes: Spec completion pack should be active whenever the workflow is in Needs Spec.
+- rule_id: status_planned_requires_plan_pack
+  statuses:
+  - planned
+  triggers:
+  - system_contract_built
+  - system_rework_routed
+  task_types: []
+  requires_integration: null
+  add_skill_pack_refs:
+  - plan_readiness_core
+  notes: Planning and readiness checks remain explicit at the planned stage.
+- rule_id: status_agent_review_requires_quality_packs
+  statuses:
+  - agent_review
+  triggers:
+  - system_build_finished
+  task_types: []
+  requires_integration: null
+  add_skill_pack_refs:
+  - test_verification_core
+  - review_quality_core
+  - security_governance_core
+  notes: Quality packs join the role-based mapping during agent review.
+- rule_id: status_deploying_requires_release_pack
+  statuses:
+  - deploying
+  triggers:
+  - system_deploy_started
+  - system_checks_green
+  task_types: []
+  requires_integration: null
+  add_skill_pack_refs:
+  - release_delivery_core
+  - docs_sync_core
+  notes: Release packaging and docs sync remain explicit during deploy execution.
+- rule_id: status_monitoring_requires_monitoring_pack
+  statuses:
+  - monitoring
+  triggers:
+  - system_deploy_finished
+  task_types: []
+  requires_integration: null
+  add_skill_pack_refs:
+  - monitoring_ops_core
+  notes: Monitoring packs activate after deploy completion.
+- rule_id: trigger_human_input_requires_reporting_pack
+  statuses:
+  - needs_input
+  - needs_human_decision
+  triggers:
+  - human_input_received
+  - human_comment_ask
+  - human_decision_given
+  task_types: []
+  requires_integration: null
+  add_skill_pack_refs:
+  - reporting_writeback_core
+  notes: Human-facing writeback remains explicit during ask/answer loops.
+- rule_id: task_type_integration_adds_integration_packs
+  statuses:
+  - planned
+  - ready_for_build
+  - coding
+  - needs_input
+  triggers:
+  - credential_required
+  - credential_validated
+  - oauth_consent_completed
+  - webhook_registered
+  - integration_verified
+  - system_ready_check_passed
+  - system_build_started
+  task_types:
+  - integration
+  requires_integration: true
+  add_skill_pack_refs:
+  - integration_boundary_core
+  - build_integrations_core
+  notes: Integration tasks require both readiness and implementation packs.
+- rule_id: task_type_release_adds_release_and_monitoring_packs
+  statuses:
+  - ready_to_merge
+  - deploying
+  - monitoring
+  triggers:
+  - system_checks_green
+  - system_deploy_started
+  - system_deploy_finished
+  task_types:
+  - release
+  requires_integration: null
+  add_skill_pack_refs:
+  - release_delivery_core
+  - monitoring_ops_core
+  - docs_sync_core
+  notes: Release tasks compose release, monitoring, and docs packs even before runtime consumption exists.
+- rule_id: task_type_maintenance_adds_dependency_pack
+  statuses:
+  - planned
+  - ready_for_build
+  - coding
+  triggers:
+  - system_plan_built
+  - system_ready_check_passed
+  - system_build_started
+  task_types:
+  - maintenance
+  requires_integration: null
+  add_skill_pack_refs:
+  - dependency_maintenance_core
+  notes: Maintenance tasks need explicit dependency hygiene coverage.
+- rule_id: task_type_provisioning_adds_platform_pack
+  statuses:
+  - planned
+  - ready_for_build
+  - coding
+  triggers:
+  - system_plan_built
+  - system_ready_check_passed
+  - system_build_started
+  task_types:
+  - provisioning
+  requires_integration: null
+  add_skill_pack_refs:
+  - provisioner_platform_core
+  notes: Provisioning work activates the platform scaffold pack.
