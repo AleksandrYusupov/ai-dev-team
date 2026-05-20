@@ -20,7 +20,7 @@
     "@temporalio/client": "^1.15.0",
     "@temporalio/worker": "^1.11.7",
     "@temporalio/workflow": "^1.11.7",
-    "kysely": "^0.28.3",
+    "kysely": "^0.28.17",
     "yaml": "^2.8.1"
   },
   "devDependencies": {

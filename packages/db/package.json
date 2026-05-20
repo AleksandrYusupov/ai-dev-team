@@ -29,7 +29,7 @@
   "dependencies": {
     "@ai-dev-team/config": "workspace:*",
     "@ai-dev-team/shared": "workspace:*",
-    "kysely": "^0.28.3",
+    "kysely": "^0.28.17",
     "pg": "^8.14.1",
     "yaml": "^2.8.1",
     "zod": "^4.0.1"
