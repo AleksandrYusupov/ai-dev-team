@@ -16,7 +16,7 @@
     "@ai-dev-team/config": "workspace:*",
     "@ai-dev-team/db": "workspace:*",
     "@ai-dev-team/shared": "workspace:*",
-    "@temporalio/client": "^1.15.0",
-    "fastify": "^5.2.1"
+    "@temporalio/client": "^1.17.2",
+    "fastify": "^5.8.5"
   }
 }

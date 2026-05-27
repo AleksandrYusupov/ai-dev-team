@@ -17,13 +17,13 @@
     "@ai-dev-team/config": "workspace:*",
     "@ai-dev-team/db": "workspace:*",
     "@ai-dev-team/shared": "workspace:*",
-    "@temporalio/client": "^1.15.0",
-    "@temporalio/worker": "^1.11.7",
-    "@temporalio/workflow": "^1.11.7",
-    "kysely": "^0.28.3",
-    "yaml": "^2.8.1"
+    "@temporalio/client": "^1.17.2",
+    "@temporalio/worker": "^1.17.2",
+    "@temporalio/workflow": "^1.17.2",
+    "kysely": "^0.29.2",
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
-    "@temporalio/testing": "^1.15.0"
+    "@temporalio/testing": "^1.17.2"
   }
 }
